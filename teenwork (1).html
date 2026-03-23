@@ -1,0 +1,2579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>launchpad</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<!-- Lucide icons via CDN (MIT licensed, free for commercial use) -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root{
+  --navy:#1D2044;--navy-mid:#272b5a;--navy-light:#363c7a;
+  --coral:#FF8F66;--coral-light:#ffaa8a;--coral-pale:#fff3ee;
+  --white:#fff;--off:#f6f6fb;--gray:#9298be;--gray-light:#e5e6f4;
+  --verified:#00c9a7;--vbg:#e6faf6;
+  --shadow:0 4px 24px rgba(29,32,68,.10);--shadow-h:0 8px 36px rgba(29,32,68,.18);
+  --r:18px;--rs:10px;--tabh:68px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;max-width:480px;margin:0 auto;overflow-x:hidden;}
+h1,h2,h3,h4{font-family:'Archivo',sans-serif;}
+input,textarea,select{font-family:'DM Sans',sans-serif;}
+button{cursor:pointer;}
+/* icons */
+.ic{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ic svg{width:var(--icsz,18px);height:var(--icsz,18px);stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── AUTH ── */
+#auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 24px;background:var(--navy);animation:fadeIn .5s ease;}
+.auth-logo{font-family:'Archivo',sans-serif;font-size:2.4rem;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:6px;}
+.auth-logo span{color:var(--coral);}
+.auth-tag{color:var(--gray);font-size:.95rem;margin-bottom:36px;text-align:center;}
+.auth-tabs{display:flex;background:var(--navy-mid);border-radius:12px;padding:4px;margin-bottom:24px;width:100%;}
+.auth-tab{flex:1;padding:10px;text-align:center;border-radius:9px;font-family:'Archivo',sans-serif;font-weight:600;font-size:.9rem;color:var(--gray);transition:all .2s;cursor:pointer;}
+.auth-tab.on{background:var(--coral);color:#fff;}
+.auth-form{width:100%;display:flex;flex-direction:column;gap:13px;}
+.auth-form input{width:100%;padding:14px 16px;border-radius:var(--rs);border:2px solid var(--navy-mid);background:var(--navy-mid);color:#fff;font-size:.95rem;outline:none;transition:border .2s;}
+.auth-form input::placeholder{color:var(--gray);}
+.auth-form input:focus{border-color:var(--coral);}
+.auth-btn{padding:15px;border-radius:var(--rs);border:none;background:var(--coral);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;transition:background .2s;}
+.auth-btn:hover{background:var(--coral-light);}
+.auth-note{color:var(--gray);font-size:.8rem;text-align:center;}
+.auth-err{color:#ff8870;font-size:.82rem;text-align:center;min-height:18px;margin-top:4px;}
+
+/* ── BUSINESS SIGNUP ── */
+.biz-pending{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 24px;background:var(--navy);text-align:center;}
+.biz-pending-icon{width:64px;height:64px;border-radius:50%;background:rgba(255,143,102,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+.biz-pending-icon .ic{--icsz:30px;color:var(--coral);}
+.biz-pending h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.4rem;color:#fff;margin-bottom:10px;}
+.biz-pending p{color:var(--gray);font-size:.9rem;line-height:1.6;margin-bottom:28px;}
+.biz-pending-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:22px;background:rgba(255,143,102,.12);border:1.5px solid rgba(255,143,102,.3);color:var(--coral);font-family:'Archivo',sans-serif;font-weight:700;font-size:.85rem;margin-bottom:28px;}
+.biz-pending-badge .ic{--icsz:16px;}
+
+/* ── BUSINESS APP ── */
+#biz-app{display:none;flex-direction:column;min-height:100vh;}
+#biz-app.on{display:flex;animation:fadeIn .4s ease;}
+.biz-hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:28px 22px 22px;position:relative;overflow:hidden;}
+.biz-hero::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,143,102,.09);}
+.biz-logo-circle{width:72px;height:72px;border-radius:18px;background:var(--navy-mid);border:3px solid var(--coral);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:800;font-size:1.6rem;margin-bottom:14px;overflow:hidden;position:relative;z-index:1;}
+.biz-logo-circle img{width:100%;height:100%;object-fit:cover;}
+.biz-org-name{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.3rem;color:#fff;position:relative;z-index:1;}
+.biz-org-type{color:rgba(255,255,255,.5);font-size:.82rem;margin-top:3px;position:relative;z-index:1;}
+.biz-org-desc{color:rgba(255,255,255,.68);font-size:.87rem;margin-top:8px;line-height:1.55;position:relative;z-index:1;}
+.biz-vbadge{display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:4px 12px;border-radius:20px;background:var(--vbg);color:var(--verified);font-family:'Archivo',sans-serif;font-weight:700;font-size:.75rem;position:relative;z-index:1;}
+.biz-vbadge .ic{--icsz:13px;}
+.biz-body{padding:18px;}
+.biz-sect-hdr{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.biz-sect-hdr .ic{--icsz:16px;color:var(--coral);}
+.biz-sect-hdr::after{content:'';flex:1;height:1.5px;background:var(--gray-light);}
+/* post job form */
+.post-job-card{background:#fff;border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin-bottom:16px;}
+.pj-field{margin-bottom:13px;}
+.pj-lbl{font-family:'Archivo',sans-serif;font-weight:600;font-size:.79rem;color:var(--gray);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.pj-req{color:var(--coral);font-size:.67rem;}
+.pj-inp{width:100%;padding:11px 13px;border-radius:var(--rs);border:1.5px solid var(--gray-light);background:#fff;color:var(--navy);font-size:.9rem;outline:none;transition:border .2s;font-family:'DM Sans',sans-serif;}
+.pj-inp:focus{border-color:var(--coral);}
+.pj-inp.err{border-color:#f55;}
+.pj-errmsg{font-size:.74rem;color:#e55;margin-top:3px;display:none;}
+.pj-errmsg.on{display:block;}
+.pj-ta{resize:none;min-height:76px;line-height:1.5;}
+.pj-submit{width:100%;padding:13px;border-radius:var(--rs);border:none;background:var(--coral);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.97rem;transition:background .2s;margin-top:4px;}
+.pj-submit:hover{background:var(--coral-light);}
+/* biz bottom tabs */
+.biz-bot-tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--tabh);background:#fff;border-top:1.5px solid var(--gray-light);display:flex;align-items:center;z-index:200;box-shadow:0 -4px 20px rgba(29,32,68,.08);}
+
+/* ── ADMIN PANEL ── */
+.admin-page{padding:16px 18px;padding-bottom:calc(var(--tabh)+16px);}
+.admin-hdr{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-top:4px;}
+.admin-hdr h2{font-size:1.4rem;font-weight:800;}
+.admin-badge{padding:3px 10px;border-radius:20px;background:rgba(255,143,102,.12);color:var(--coral);font-size:.72rem;font-family:'Archivo',sans-serif;font-weight:700;border:1.5px solid rgba(255,143,102,.25);}
+.admin-tabs{display:flex;gap:8px;margin-bottom:18px;}
+.admin-tab{flex:1;padding:9px;border-radius:var(--rs);border:1.5px solid var(--gray-light);background:#fff;font-family:'Archivo',sans-serif;font-weight:600;font-size:.82rem;color:var(--gray);transition:all .2s;text-align:center;}
+.admin-tab.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+.admin-section{display:none;}
+.admin-section.on{display:block;animation:slideUp .25s ease;}
+.admin-card{background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:12px;animation:fadeIn .3s;}
+.admin-card-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.admin-card-logo{width:44px;height:44px;border-radius:12px;background:var(--off);display:flex;align-items:center;justify-content:center;color:var(--navy);font-family:'Archivo',sans-serif;font-weight:800;font-size:1rem;flex-shrink:0;border:1.5px solid var(--gray-light);}
+.admin-card-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:.95rem;color:var(--navy);}
+.admin-card-type{font-size:.78rem;color:var(--gray);margin-top:2px;}
+.admin-card-email{font-size:.78rem;color:var(--gray);margin-top:1px;display:flex;align-items:center;gap:4px;}
+.admin-card-email .ic{--icsz:12px;}
+.admin-card-web{font-size:.78rem;color:var(--coral);margin-top:1px;display:flex;align-items:center;gap:4px;}
+.admin-card-web .ic{--icsz:12px;}
+.admin-card-desc{font-size:.84rem;color:#2a3a5c;line-height:1.55;margin-bottom:12px;padding:10px 12px;background:var(--off);border-radius:var(--rs);}
+.admin-actions{display:flex;gap:8px;}
+.admin-approve{flex:1;padding:9px;border-radius:var(--rs);border:none;background:var(--verified);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.83rem;transition:background .2s;}
+.admin-approve:hover{background:#00b396;}
+.admin-reject{flex:1;padding:9px;border-radius:var(--rs);border:1.5px solid #e5e6f4;background:#fff;color:#e05555;font-family:'Archivo',sans-serif;font-weight:700;font-size:.83rem;transition:all .2s;}
+.admin-reject:hover{background:#fff0f0;border-color:#e05555;}
+.admin-reject-form{background:var(--off);border-radius:var(--rs);padding:12px;margin-top:10px;display:none;animation:slideUp .2s ease;}
+.admin-reject-form.on{display:block;}
+.admin-reject-inp{width:100%;padding:10px 12px;border-radius:var(--rs);border:1.5px solid var(--gray-light);font-size:.86rem;outline:none;color:var(--navy);font-family:'DM Sans',sans-serif;margin-bottom:8px;}
+.admin-reject-inp:focus{border-color:var(--coral);}
+.admin-reject-send{padding:8px 18px;border-radius:var(--rs);border:none;background:#e05555;color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.82rem;transition:background .2s;}
+.admin-reject-send:hover{background:#c44;}
+.admin-approved-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;background:var(--vbg);color:var(--verified);font-size:.72rem;font-family:'Archivo',sans-serif;font-weight:700;}
+.admin-approved-badge .ic{--icsz:11px;}
+.admin-empty{text-align:center;padding:40px 20px;color:var(--gray);font-size:.9rem;}
+.admin-empty .ic{--icsz:36px;color:var(--gray-light);display:block;margin:0 auto 12px;}
+
+/* ── ONBOARDING ── */
+#ob-screen{display:none;min-height:100vh;background:var(--navy);flex-direction:column;}
+#ob-screen.on{display:flex;animation:fadeIn .4s ease;}
+.ob-hdr{padding:22px 22px 0;display:flex;align-items:center;gap:14px;}
+.ob-prog-wrap{flex:1;}
+.ob-prog-bar{height:4px;background:var(--navy-mid);border-radius:4px;overflow:hidden;}
+.ob-prog-fill{height:100%;background:var(--coral);border-radius:4px;transition:width .4s ease;}
+.ob-prog-lbl{font-family:'Archivo',sans-serif;font-weight:600;font-size:.72rem;color:var(--gray);margin-top:5px;}
+.ob-skip{font-size:.82rem;color:var(--gray);font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.ob-skip:hover{color:#fff;}
+.ob-body{flex:1;padding:24px 22px 14px;overflow-y:auto;}
+.ob-step{display:none;animation:slideUp .3s ease;}
+.ob-step.on{display:block;}
+.ob-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.5rem;color:#fff;margin-bottom:5px;line-height:1.2;}
+.ob-title span{color:var(--coral);}
+.ob-sub{color:var(--gray);font-size:.87rem;margin-bottom:24px;line-height:1.5;}
+.ob-field{margin-bottom:15px;}
+.ob-lbl{font-family:'Archivo',sans-serif;font-weight:600;font-size:.78rem;color:rgba(255,255,255,.62);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.ob-req{color:var(--coral);font-size:.67rem;}
+.ob-opt{color:var(--gray);font-size:.67rem;font-weight:400;}
+.ob-inp{width:100%;padding:12px 14px;border-radius:var(--rs);border:2px solid var(--navy-mid);background:var(--navy-mid);color:#fff;font-size:.92rem;outline:none;transition:border .2s;}
+.ob-inp::placeholder{color:var(--gray);}
+.ob-inp:focus{border-color:var(--coral);}
+.ob-inp.err{border-color:#f55;}
+.ob-errmsg{font-size:.74rem;color:#f88;margin-top:4px;display:none;}
+.ob-errmsg.on{display:block;}
+.ob-ta{resize:none;min-height:80px;line-height:1.5;}
+/* photo */
+.ob-photo-row{display:flex;align-items:center;gap:16px;}
+.ob-photo-circle{width:68px;height:68px;border-radius:50%;background:var(--navy-light);border:3px solid var(--coral);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:800;font-size:1.4rem;overflow:hidden;flex-shrink:0;position:relative;}
+.ob-photo-circle img{width:100%;height:100%;object-fit:cover;}
+.ob-photo-ov{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:50%;}
+.ob-photo-circle:hover .ob-photo-ov{opacity:1;}
+.ob-photo-ov svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;}
+#ob-file{display:none;}
+.ob-photo-btns{display:flex;flex-direction:column;gap:7px;}
+.ob-photo-btn{padding:7px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.72);font-family:'Archivo',sans-serif;font-weight:600;font-size:.78rem;transition:all .2s;}
+.ob-photo-btn:hover{border-color:var(--coral);color:var(--coral);}
+/* interest chips */
+.i-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.i-chip{padding:8px 13px;border-radius:22px;border:1.5px solid rgba(255,255,255,.14);background:transparent;color:rgba(255,255,255,.62);font-family:'Archivo',sans-serif;font-weight:600;font-size:.79rem;display:flex;align-items:center;gap:6px;transition:all .2s;}
+.i-chip .ic{--icsz:14px;color:rgba(255,255,255,.4);}
+.i-chip:hover{border-color:var(--coral);color:var(--coral);}
+.i-chip:hover .ic{color:var(--coral);}
+.i-chip.sel{background:var(--coral);border-color:var(--coral);color:#fff;}
+.i-chip.sel .ic{color:#fff;}
+.cust-row{display:flex;gap:8px;margin-top:10px;}
+.cust-inp{flex:1;padding:9px 13px;border-radius:22px;border:1.5px solid rgba(255,255,255,.14);background:var(--navy-mid);color:#fff;font-size:.83rem;outline:none;transition:border .2s;}
+.cust-inp::placeholder{color:var(--gray);}
+.cust-inp:focus{border-color:var(--coral);}
+.add-btn{padding:9px 15px;border-radius:22px;border:none;background:var(--navy-light);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.79rem;transition:background .2s;}
+.add-btn:hover{background:var(--coral);}
+.cust-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;}
+/* skills */
+.sk-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
+.sk-tag{padding:5px 11px;border-radius:8px;background:var(--navy-mid);border:1.5px solid rgba(255,255,255,.11);color:rgba(255,255,255,.8);font-size:.78rem;font-family:'Archivo',sans-serif;font-weight:600;display:flex;align-items:center;gap:5px;}
+.sk-x{color:var(--gray);font-size:.85rem;transition:color .15s;}
+.sk-x:hover{color:var(--coral);}
+
+/* ── RESUME BUILDER ── */
+.res-sections{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.res-sec-tab{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--rs);background:var(--navy-mid);border:1.5px solid rgba(255,255,255,.08);font-family:'Archivo',sans-serif;font-weight:600;font-size:.88rem;color:rgba(255,255,255,.7);transition:all .2s;}
+.res-sec-tab.done{border-color:var(--verified);color:#fff;}
+.res-sec-tab .ic{--icsz:16px;color:var(--gray);}
+.res-sec-tab.done .ic{color:var(--verified);}
+.res-sec-tab-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--gray);display:flex;align-items:center;justify-content:center;margin-left:auto;flex-shrink:0;}
+.res-sec-tab.done .res-sec-tab-check{background:var(--verified);border-color:var(--verified);}
+.res-sec-tab.done .res-sec-tab-check svg{stroke:#fff;}
+.res-sub-prog{display:flex;gap:6px;margin-bottom:18px;}
+.res-sub-dot{height:3px;flex:1;border-radius:3px;background:var(--navy-mid);transition:background .3s;}
+.res-sub-dot.done{background:var(--coral);}
+.res-sub-dot.active{background:rgba(255,143,102,.5);}
+.res-sec-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.2rem;color:#fff;margin-bottom:4px;}
+.res-sec-sub{color:var(--gray);font-size:.84rem;margin-bottom:18px;line-height:1.5;}
+/* entry cards */
+.entry-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.entry-card{background:var(--navy-mid);border-radius:var(--rs);padding:13px 14px;border:1.5px solid rgba(255,255,255,.08);display:flex;align-items:flex-start;gap:10px;}
+.entry-card-body{flex:1;}
+.entry-card-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:.88rem;color:#fff;}
+.entry-card-sub{font-size:.78rem;color:var(--gray);margin-top:2px;}
+.entry-del{background:none;border:none;padding:4px;color:var(--gray);transition:color .15s;display:flex;}
+.entry-del:hover{color:var(--coral);}
+.entry-del svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;}
+.add-entry-btn{display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:var(--rs);border:1.5px dashed rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.55);font-family:'Archivo',sans-serif;font-weight:600;font-size:.85rem;width:100%;transition:all .2s;}
+.add-entry-btn:hover{border-color:var(--coral);color:var(--coral);}
+.add-entry-btn .ic{--icsz:15px;}
+/* inline entry form */
+.entry-form{background:rgba(255,255,255,.04);border-radius:var(--rs);padding:14px;border:1.5px solid rgba(255,107,71,.3);margin-bottom:12px;display:none;animation:slideUp .25s ease;}
+.entry-form.on{display:block;}
+.entry-form-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:.88rem;color:#fff;margin-bottom:12px;}
+.ef-row{display:flex;gap:10px;margin-bottom:10px;}
+.ef-row .ob-inp{flex:1;}
+.ef-save{padding:9px 18px;border-radius:8px;border:none;background:var(--coral);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.83rem;transition:background .2s;}
+.ef-save:hover{background:var(--coral-light);}
+.ef-cancel{padding:9px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.6);font-family:'Archivo',sans-serif;font-weight:600;font-size:.83rem;transition:all .2s;}
+.ef-cancel:hover{border-color:#fff;color:#fff;}
+
+/* ob footer */
+.ob-footer{padding:14px 22px 28px;display:flex;gap:10px;}
+.ob-next{flex:1;padding:14px;border-radius:var(--rs);border:none;background:var(--coral);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.97rem;transition:background .2s;}
+.ob-next:hover{background:var(--coral-light);}
+.ob-back{padding:14px 18px;border-radius:var(--rs);border:2px solid rgba(255,255,255,.14);background:transparent;color:rgba(255,255,255,.6);font-family:'Archivo',sans-serif;font-weight:600;font-size:.9rem;transition:all .2s;}
+.ob-back:hover{border-color:#fff;color:#fff;}
+
+/* ── APP ── */
+#app{display:none;flex-direction:column;min-height:100vh;}
+#app.on{display:flex;animation:fadeIn .4s ease;}
+.top-bar{background:#fff;padding:14px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--gray-light);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(15,31,61,.06);}
+.top-logo{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.4rem;color:var(--navy);}
+.top-logo span{color:var(--coral);}
+.top-av{width:36px;height:36px;border-radius:50%;border:2.5px solid var(--coral);background:var(--navy-light);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.85rem;overflow:hidden;flex-shrink:0;}
+.top-av img{width:100%;height:100%;object-fit:cover;}
+.page{display:none;flex:1;overflow-y:auto;padding-bottom:calc(var(--tabh)+12px);}
+.page.on{display:block;animation:slideUp .3s ease;}
+
+/* bottom tabs */
+.bot-tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--tabh);background:#fff;border-top:1.5px solid var(--gray-light);display:flex;align-items:center;z-index:200;box-shadow:0 -4px 20px rgba(29,32,68,.08);}
+.t-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0;color:var(--gray);transition:color .2s;border:none;background:none;height:100%;}
+.t-btn .ic{--icsz:26px;display:flex;}
+.t-btn .ic svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.8;fill:none;}
+.t-btn.on{color:var(--coral);}
+.t-btn.on .ic svg{stroke:var(--coral);}
+.t-btn-create{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0;color:var(--gray);transition:color .2s;border:none;background:none;height:100%;}
+.t-btn-create .ic{--icsz:26px;display:flex;}
+.t-btn-create .ic svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.8;fill:none;}
+.t-btn-create:hover{color:var(--coral);}
+
+/* ── STORIES ── */
+.stories-wrap{border-bottom:1.5px solid var(--gray-light);background:#fff;}
+.stories-row{display:flex;gap:12px;padding:12px 18px 14px;overflow-x:auto;scrollbar-width:none;}
+.stories-row::-webkit-scrollbar{display:none;}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+.story-ring{width:60px;height:60px;border-radius:14px;padding:3px;background:linear-gradient(135deg,var(--coral),#ffb347);}
+.story-ring.seen{background:var(--gray-light);}
+.story-ring.add-ring{background:var(--gray-light);}
+.story-add-inner{width:100%;height:100%;border-radius:11px;background:var(--off);border:2px solid #fff;display:flex;align-items:center;justify-content:center;}
+.story-add-inner .ic{--icsz:20px;color:var(--coral);}
+.story-inner{width:100%;height:100%;border-radius:11px;background:var(--navy-light);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.9rem;overflow:hidden;border:2px solid #fff;}
+.story-inner img{width:100%;height:100%;object-fit:cover;border-radius:9px;}
+.story-lbl{font-size:.68rem;font-family:'Archivo',sans-serif;font-weight:600;color:var(--navy);max-width:62px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.story-time{font-size:.6rem;color:var(--gray);}
+#story-viewer{display:none;position:fixed;inset:0;background:rgba(8,12,25,.97);z-index:500;flex-direction:column;align-items:center;justify-content:center;max-width:480px;left:50%;transform:translateX(-50%);}
+#story-viewer.on{display:flex;animation:fadeIn .2s;}
+/* bars + header pinned to top, content centered */
+.sv-top{position:absolute;top:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;padding-top:18px;}
+.sv-center{display:flex;flex-direction:column;align-items:center;width:100%;padding:0;}
+/* multi-bar progress row */
+.sv-bars{display:flex;gap:4px;width:88%;margin-bottom:14px;}
+.sv-bar-seg{flex:1;height:3px;background:rgba(255,255,255,.22);border-radius:3px;overflow:hidden;}
+.sv-bar-seg-fill{height:100%;background:#fff;border-radius:3px;width:0;}
+.sv-bar-seg.done .sv-bar-seg-fill{width:100%;transition:none;}
+.sv-bar-seg.active .sv-bar-seg-fill{width:0;transition:width 5s linear;}
+/* old single bar kept for compat */
+.sv-prog{display:none;}
+.sv-head{display:flex;align-items:center;gap:10px;width:88%;margin-bottom:20px;}
+.sv-av{width:36px;height:36px;border-radius:50%;background:var(--navy-light);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.85rem;overflow:hidden;flex-shrink:0;}
+.sv-av img{width:100%;height:100%;object-fit:cover;}
+.sv-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:.95rem;color:#fff;}
+.sv-time{font-size:.72rem;color:rgba(255,255,255,.42);}
+.sv-x{margin-left:auto;padding:4px;color:rgba(255,255,255,.5);display:flex;border:none;background:none;}
+.sv-x svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.5;}
+.sv-body{width:88%;background:var(--navy-mid);border-radius:20px;padding:22px;font-size:.96rem;color:#fff;line-height:1.65;text-align:center;min-height:110px;display:flex;align-items:center;justify-content:center;}
+.sv-img{width:88%;border-radius:16px;overflow:hidden;margin-bottom:10px;}
+.sv-img img{width:100%;max-height:260px;object-fit:cover;display:block;border-radius:16px;}
+.sv-orig{font-size:1.15rem;color:#fff;margin-top:18px;text-align:center;font-family:'Archivo',sans-serif;font-weight:800;letter-spacing:.01em;}
+/* tap zones */
+.sv-tap-zones{position:absolute;inset:0;display:flex;pointer-events:none;}
+.sv-tap-prev{flex:0 0 38%;pointer-events:all;cursor:pointer;}
+.sv-tap-next{flex:1;pointer-events:all;cursor:pointer;}
+
+/* ── IMAGE CROPPER ── */
+#cropper-modal{display:none;position:fixed;inset:0;z-index:700;background:rgba(8,10,28,.96);flex-direction:column;align-items:center;justify-content:center;max-width:480px;left:50%;transform:translateX(-50%);}
+#cropper-modal.on{display:flex;animation:fadeIn .2s;}
+.cropper-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;color:#fff;margin-bottom:14px;text-align:center;}
+.cropper-viewport{position:relative;width:300px;height:300px;border-radius:16px;overflow:hidden;background:#111;touch-action:none;cursor:grab;}
+.cropper-viewport:active{cursor:grabbing;}
+.cropper-viewport img{position:absolute;transform-origin:0 0;}
+.cropper-circle .cropper-viewport{border-radius:50%;}
+.cropper-hint{color:rgba(255,255,255,.45);font-size:.78rem;margin-top:10px;text-align:center;}
+.cropper-zoom-row{display:flex;align-items:center;gap:12px;margin-top:14px;width:260px;}
+.cropper-zoom-row .ic{--icsz:18px;color:rgba(255,255,255,.5);}
+.cropper-zoom-slider{flex:1;-webkit-appearance:none;height:3px;border-radius:3px;background:rgba(255,255,255,.2);outline:none;}
+.cropper-zoom-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--coral);cursor:pointer;}
+.cropper-actions{display:flex;gap:10px;margin-top:18px;}
+.cropper-cancel{padding:11px 22px;border-radius:var(--rs);border:1.5px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.7);font-family:'Archivo',sans-serif;font-weight:600;font-size:.9rem;transition:all .2s;}
+.cropper-cancel:hover{border-color:#fff;color:#fff;}
+.cropper-apply{padding:11px 28px;border-radius:var(--rs);border:none;background:var(--coral);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.9rem;transition:background .2s;}
+.cropper-apply:hover{background:var(--coral-light);}
+.feed-hdr{padding:18px 18px 6px;}
+.feed-hdr h2{font-size:1.5rem;font-weight:800;}
+.feed-hdr p{color:var(--gray);font-size:.87rem;margin-top:2px;}
+.compose-box{margin:10px 18px 6px;background:#fff;border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);display:flex;gap:12px;}
+.compose-av{width:38px;height:38px;border-radius:50%;background:var(--navy);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.9rem;overflow:hidden;}
+.compose-av img{width:100%;height:100%;object-fit:cover;}
+.compose-txt{flex:1;border:none;outline:none;background:var(--off);border-radius:10px;padding:10px 14px;font-size:.9rem;resize:none;color:var(--navy);min-height:44px;}
+.compose-acts{display:flex;gap:8px;margin-top:10px;justify-content:flex-end;}
+.cmp-btn{padding:6px 13px;border-radius:8px;border:1.5px solid var(--gray-light);background:#fff;color:var(--navy-light);font-size:.79rem;font-family:'Archivo',sans-serif;font-weight:600;display:flex;align-items:center;gap:5px;transition:all .2s;}
+.cmp-btn .ic{--icsz:14px;}
+.cmp-btn:hover{border-color:var(--coral);color:var(--coral);}
+.post-btn{padding:6px 18px;border-radius:8px;border:none;background:var(--coral);color:#fff;font-size:.85rem;font-family:'Archivo',sans-serif;font-weight:700;transition:background .2s;}
+.post-btn:hover{background:var(--coral-light);}
+/* post image attachment — up to 4 images */
+.compose-imgs-strip{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.compose-img-thumb{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;flex-shrink:0;animation:fadeIn .2s;}
+.compose-img-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.compose-img-thumb-rm{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(15,20,50,.72);border:none;display:flex;align-items:center;justify-content:center;color:#fff;}
+.compose-img-thumb-rm svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.5;}
+.compose-add-more{width:72px;height:72px;border-radius:10px;border:1.5px dashed var(--gray-light);background:var(--off);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gray);transition:all .2s;}
+.compose-add-more:hover{border-color:var(--coral);color:var(--coral);}
+.compose-add-more .ic{--icsz:20px;}
+/* post image row in feed */
+.post-imgs{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none;padding-bottom:2px;}
+.post-imgs::-webkit-scrollbar{display:none;}
+.post-img-thumb{flex-shrink:0;border-radius:12px;overflow:hidden;cursor:pointer;}
+.post-img-thumb img{display:block;object-fit:cover;}
+.post-img-thumb.single{width:100%;border-radius:12px;}
+.post-img-thumb.single img{width:100%;max-height:300px;object-fit:cover;}
+.post-img-thumb.multi img{width:160px;height:160px;}
+/* lightbox */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(8,10,28,.95);z-index:600;align-items:center;justify-content:center;max-width:480px;left:50%;transform:translateX(-50%);}
+#lightbox.on{display:flex;}
+#lightbox img{max-width:92%;max-height:88vh;border-radius:14px;object-fit:contain;}
+#lightbox-close{position:absolute;top:18px;right:18px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.12);border:none;display:flex;align-items:center;justify-content:center;color:#fff;}
+#lightbox-close svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.5;}
+.post-card{margin:10px 18px;background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--shadow);transition:box-shadow .2s;animation:fadeIn .3s;}
+.post-card:hover{box-shadow:var(--shadow-h);}
+.post-hdr{display:flex;align-items:center;gap:11px;margin-bottom:12px;}
+.post-av{width:40px;height:40px;border-radius:50%;background:var(--navy-light);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.95rem;flex-shrink:0;overflow:hidden;}
+.post-av img{width:100%;height:100%;object-fit:cover;}
+.post-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:.95rem;}
+.post-role{font-size:.78rem;color:var(--gray);}
+.post-time{font-size:.75rem;color:var(--gray);}
+.post-body{font-size:.9rem;line-height:1.6;color:#2a3a5c;margin-bottom:12px;}
+.post-acts{display:flex;gap:16px;padding-top:10px;border-top:1px solid var(--gray-light);}
+.pa{display:flex;align-items:center;gap:6px;color:var(--gray);font-size:.82rem;font-family:'Archivo',sans-serif;font-weight:600;border:none;background:none;transition:color .2s;padding:4px 0;}
+.pa .ic{--icsz:16px;}
+.pa:hover{color:var(--coral);}
+.pa.act{color:var(--coral);}
+.comments-sec{margin-top:12px;border-top:1px solid var(--gray-light);padding-top:10px;display:none;}
+.comments-sec.on{display:block;animation:fadeIn .2s;}
+.comment{display:flex;gap:8px;margin-bottom:8px;}
+.c-av{width:28px;height:28px;border-radius:50%;background:var(--navy-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.68rem;font-weight:700;font-family:'Archivo',sans-serif;overflow:hidden;}
+.c-av img{width:100%;height:100%;object-fit:cover;}
+.c-bubble{background:var(--off);border-radius:10px;padding:7px 11px;flex:1;}
+.c-author{font-family:'Archivo',sans-serif;font-weight:700;font-size:.76rem;color:var(--navy);}
+.c-text{font-size:.82rem;color:#2a3a5c;margin-top:2px;}
+.c-row{display:flex;gap:8px;margin-top:8px;}
+.c-inp{flex:1;border:1.5px solid var(--gray-light);border-radius:8px;padding:7px 11px;font-size:.85rem;outline:none;color:var(--navy);}
+.c-inp:focus{border-color:var(--coral);}
+.c-send{padding:7px 14px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-family:'Archivo',sans-serif;font-weight:700;font-size:.82rem;transition:background .2s;}
+.c-send:hover{background:var(--coral);}
+
+/* ── MESSAGES ── */
+.msgs-wrap{padding:16px 18px;}
+.msgs-wrap h2{font-size:1.5rem;font-weight:800;margin-bottom:16px;}
+.msg-item{display:flex;align-items:center;gap:13px;padding:13px;background:#fff;border-radius:var(--rs);margin-bottom:10px;box-shadow:var(--shadow);transition:box-shadow .2s;}
+.msg-item:hover{box-shadow:var(--shadow-h);}
+.m-av{width:46px;height:46px;border-radius:50%;background:var(--navy-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:700;overflow:hidden;}
+.m-av img{width:100%;height:100%;object-fit:cover;}
+.m-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:.95rem;}
+.m-preview{font-size:.82rem;color:var(--gray);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;}
+.m-time{font-size:.75rem;color:var(--gray);}
+.unread-dot{width:9px;height:9px;border-radius:50%;background:var(--coral);flex-shrink:0;}
+#chat-view{display:none;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100vh;background:#fff;z-index:300;flex-direction:column;}
+#chat-view.on{display:flex;animation:slideUp .25s ease;}
+.chat-hdr{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1.5px solid var(--gray-light);}
+.chat-back{border:none;background:none;padding:4px;display:flex;color:var(--navy);}
+.chat-back svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.5;}
+.chat-nm{font-family:'Archivo',sans-serif;font-weight:700;font-size:1.1rem;}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.brow{display:flex;gap:8px;align-items:flex-end;}
+.brow.me{flex-direction:row-reverse;}
+.b-av{width:30px;height:30px;border-radius:50%;background:var(--navy-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.68rem;font-family:'Archivo',sans-serif;font-weight:700;overflow:hidden;}
+.b-av img{width:100%;height:100%;object-fit:cover;}
+.bubble{max-width:72%;padding:10px 14px;border-radius:16px 16px 16px 4px;font-size:.9rem;line-height:1.5;background:var(--off);color:var(--navy);}
+.brow.me .bubble{background:var(--navy);color:#fff;border-radius:16px 16px 4px 16px;}
+.chat-inp-row{display:flex;gap:10px;padding:14px 16px;border-top:1.5px solid var(--gray-light);}
+.chat-inp{flex:1;border:1.5px solid var(--gray-light);border-radius:22px;padding:10px 16px;font-size:.9rem;outline:none;color:var(--navy);}
+.chat-inp:focus{border-color:var(--coral);}
+.chat-send{width:42px;height:42px;border-radius:50%;background:var(--coral);border:none;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.chat-send:hover{background:var(--coral-light);}
+.chat-send .ic{--icsz:18px;color:#fff;}
+
+/* ── JOBS ── */
+.jobs-hdr{padding:20px 18px 6px;}
+.jobs-hdr h2{font-size:1.5rem;font-weight:800;}
+.jobs-hdr p{color:var(--gray);font-size:.87rem;margin-top:2px;}
+.filters-row{display:flex;gap:8px;padding:10px 18px;overflow-x:auto;scrollbar-width:none;}
+.filters-row::-webkit-scrollbar{display:none;}
+.f-chip{padding:7px 14px;border-radius:20px;border:1.5px solid var(--gray-light);font-family:'Archivo',sans-serif;font-weight:600;font-size:.8rem;color:var(--gray);white-space:nowrap;background:#fff;transition:all .2s;}
+.f-chip.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+.f-chip:hover:not(.on){border-color:var(--coral);color:var(--coral);}
+.job-card{margin:10px 18px;background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--shadow);transition:box-shadow .2s;animation:fadeIn .3s;}
+.job-card:hover{box-shadow:var(--shadow-h);}
+.job-top{display:flex;gap:12px;margin-bottom:10px;}
+.job-icon{width:46px;height:46px;border-radius:12px;background:var(--off);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.job-icon .ic{--icsz:22px;color:var(--navy-light);}
+.job-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:.98rem;}
+.job-org{display:flex;align-items:center;gap:5px;font-size:.82rem;color:var(--gray);margin-top:2px;flex-wrap:wrap;}
+.vbadge{display:inline-flex;align-items:center;gap:3px;background:var(--vbg);color:var(--verified);border-radius:6px;padding:2px 7px;font-size:.7rem;font-family:'Archivo',sans-serif;font-weight:700;}
+.vbadge .ic{--icsz:11px;}
+.jtags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.jtag{padding:4px 10px;border-radius:6px;background:var(--off);color:var(--navy-light);font-size:.75rem;font-family:'Archivo',sans-serif;font-weight:600;}
+.jtag.job{background:var(--coral-pale);color:var(--coral);}
+.jtag.volunteer{background:#e8f0ff;color:var(--navy-light);}
+.jtag.mentorship{background:var(--vbg);color:var(--verified);}
+.job-foot{display:flex;align-items:center;justify-content:space-between;}
+.job-dl{font-size:.78rem;color:var(--gray);display:flex;align-items:center;gap:5px;}
+.job-dl .ic{--icsz:13px;color:var(--gray);}
+.apply-btn{padding:7px 18px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-family:'Archivo',sans-serif;font-weight:700;font-size:.82rem;transition:background .2s;}
+.apply-btn:hover{background:var(--coral);}
+
+/* ── PROFILE ── */
+.p-hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:28px 22px 22px;position:relative;overflow:hidden;}
+.p-hero::after{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,107,71,.09);}
+.p-hero::before{content:'';position:absolute;bottom:-30px;left:-30px;width:130px;height:130px;border-radius:50%;background:rgba(255,107,71,.05);}
+.p-av{width:80px;height:80px;border-radius:50%;border:3px solid var(--coral);background:var(--navy-mid);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:800;font-size:1.8rem;margin-bottom:14px;overflow:hidden;position:relative;z-index:1;}
+.p-av img{width:100%;height:100%;object-fit:cover;}
+.p-name{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.4rem;color:#fff;position:relative;z-index:1;}
+.p-uname{color:rgba(255,255,255,.42);font-size:.82rem;margin-top:2px;position:relative;z-index:1;}
+.p-headline{color:rgba(255,255,255,.7);font-size:.88rem;margin-top:4px;position:relative;z-index:1;}
+.p-loc{color:rgba(255,255,255,.42);font-size:.77rem;margin-top:3px;display:flex;align-items:center;gap:4px;position:relative;z-index:1;}
+.p-loc .ic{--icsz:12px;color:rgba(255,255,255,.35);}
+.p-badges{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;position:relative;z-index:1;}
+.p-badge{padding:4px 12px;border-radius:20px;border:1.5px solid rgba(255,255,255,.17);color:rgba(255,255,255,.76);font-size:.75rem;font-family:'Archivo',sans-serif;font-weight:600;display:flex;align-items:center;gap:5px;}
+.p-badge .ic{--icsz:12px;}
+.p-body{padding:18px;}
+.p-sec{margin-bottom:22px;}
+.p-sec-hdr{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.p-sec-hdr .ic{--icsz:16px;color:var(--coral);}
+.p-sec-hdr::after{content:'';flex:1;height:1.5px;background:var(--gray-light);}
+.stat-row{display:flex;gap:10px;margin-bottom:18px;}
+.stat-card{flex:1;background:#fff;border-radius:var(--rs);padding:14px;text-align:center;border:1.5px solid var(--gray-light);}
+.stat-n{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.5rem;color:var(--navy);}
+.stat-l{font-size:.75rem;color:var(--gray);margin-top:2px;}
+.skills-wrap{display:flex;flex-wrap:wrap;gap:8px;}
+.s-pill{padding:6px 14px;border-radius:8px;background:var(--off);color:var(--navy-light);font-size:.82rem;font-family:'Archivo',sans-serif;font-weight:600;border:1.5px solid var(--gray-light);}
+.i-pill{padding:5px 12px;border-radius:20px;background:var(--coral-pale);color:var(--coral);font-size:.78rem;font-family:'Archivo',sans-serif;font-weight:600;}
+.bio-txt{font-size:.9rem;line-height:1.65;color:#2a3a5c;}
+.goal-card{background:linear-gradient(135deg,var(--coral-pale),#fff8f6);border:1.5px solid #ffd5c8;border-radius:var(--rs);padding:14px;}
+.goal-lbl{font-family:'Archivo',sans-serif;font-weight:700;font-size:.72rem;color:var(--coral);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+.goal-card p{font-size:.88rem;line-height:1.6;color:#5a2a1a;}
+.school-card{display:flex;align-items:center;gap:10px;background:#fff;border-radius:var(--rs);padding:13px;border:1.5px solid var(--gray-light);}
+.school-card .ic{--icsz:22px;color:var(--navy-light);}
+.school-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:.9rem;}
+.school-grade{font-size:.8rem;color:var(--gray);}
+/* resume on profile */
+.resume-entry{background:#fff;border-radius:var(--rs);padding:13px 14px;border:1.5px solid var(--gray-light);margin-bottom:8px;}
+.re-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.re-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:.9rem;color:var(--navy);}
+.re-dates{font-size:.75rem;color:var(--gray);white-space:nowrap;}
+.re-org{font-size:.82rem;color:var(--coral);margin-top:2px;font-weight:500;}
+.re-loc{font-size:.76rem;color:var(--gray);display:flex;align-items:center;gap:3px;margin-top:2px;}
+.re-loc .ic{--icsz:11px;color:var(--gray);}
+.re-desc{font-size:.83rem;color:#2a3a5c;line-height:1.55;margin-top:6px;}
+.re-link{font-size:.79rem;color:var(--coral);margin-top:4px;display:flex;align-items:center;gap:4px;}
+.re-link .ic{--icsz:12px;}
+.port-item{background:#fff;border-radius:var(--rs);padding:13px 14px;border:1.5px solid var(--gray-light);margin-bottom:8px;transition:border-color .2s;}
+
+/* ── EDIT PROFILE MODAL ── */
+#edit-modal{display:none;position:fixed;inset:0;z-index:400;max-width:480px;left:50%;transform:translateX(-50%);}
+#edit-modal.on{display:flex;flex-direction:column;animation:slideUp .3s ease;}
+.em-backdrop{position:absolute;inset:0;background:rgba(8,10,28,.55);}
+.em-sheet{position:relative;z-index:1;margin-top:auto;background:var(--navy);border-radius:24px 24px 0 0;display:flex;flex-direction:column;max-height:92vh;}
+.em-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 0;}
+.em-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.15rem;color:#fff;}
+.em-close{border:none;background:none;padding:6px;color:var(--gray);display:flex;transition:color .15s;}
+.em-close:hover{color:#fff;}
+.em-close svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.5;}
+/* section tabs inside modal */
+.em-tabs{display:flex;gap:4px;padding:14px 22px 0;overflow-x:auto;scrollbar-width:none;}
+.em-tabs::-webkit-scrollbar{display:none;}
+.em-tab{padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.13);background:transparent;color:rgba(255,255,255,.5);font-family:'Archivo',sans-serif;font-weight:600;font-size:.78rem;white-space:nowrap;transition:all .2s;}
+.em-tab.on{background:var(--coral);border-color:var(--coral);color:#fff;}
+.em-tab:hover:not(.on){border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.8);}
+.em-body{flex:1;overflow-y:auto;padding:18px 22px 24px;}
+.em-section{display:none;}
+.em-section.on{display:block;animation:slideUp .25s ease;}
+/* light-mode fields for edit modal */
+.em-field{margin-bottom:15px;}
+.em-lbl{font-family:'Archivo',sans-serif;font-weight:600;font-size:.78rem;color:rgba(255,255,255,.6);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.em-inp{width:100%;padding:11px 14px;border-radius:var(--rs);border:2px solid var(--navy-mid);background:var(--navy-mid);color:#fff;font-size:.9rem;outline:none;transition:border .2s;font-family:'DM Sans',sans-serif;}
+.em-inp::placeholder{color:var(--gray);}
+.em-inp:focus{border-color:var(--coral);}
+.em-ta{resize:none;min-height:78px;line-height:1.5;}
+.em-save-btn{width:100%;padding:14px;border-radius:var(--rs);border:none;background:var(--coral);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.97rem;margin-top:6px;transition:background .2s;}
+.em-save-btn:hover{background:var(--coral-light);}
+/* photo row in modal */
+.em-photo-row{display:flex;align-items:center;gap:16px;margin-bottom:4px;}
+.em-photo-circle{width:64px;height:64px;border-radius:50%;background:var(--navy-light);border:3px solid var(--coral);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:800;font-size:1.3rem;overflow:hidden;flex-shrink:0;position:relative;cursor:pointer;}
+.em-photo-circle img{width:100%;height:100%;object-fit:cover;}
+.em-photo-ov{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:50%;}
+.em-photo-circle:hover .em-photo-ov{opacity:1;}
+.em-photo-ov svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;}
+#em-file{display:none;}
+.em-photo-btns{display:flex;flex-direction:column;gap:7px;}
+.em-photo-btn{padding:7px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.72);font-family:'Archivo',sans-serif;font-weight:600;font-size:.78rem;transition:all .2s;}
+.em-photo-btn:hover{border-color:var(--coral);color:var(--coral);}
+/* interests in modal */
+.em-i-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+/* skills in modal */
+.em-sk-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
+.port-item:hover{border-color:var(--coral);}
+.port-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:.9rem;}
+.port-link{font-size:.8rem;color:var(--coral);margin-top:4px;display:flex;align-items:center;gap:4px;}
+.port-link .ic{--icsz:12px;}
+.edit-btn{width:100%;padding:13px;border-radius:var(--rs);border:2px solid var(--navy);background:transparent;color:var(--navy);font-family:'Archivo',sans-serif;font-weight:700;font-size:.95rem;transition:all .2s;margin-bottom:12px;}
+.edit-btn:hover{background:var(--navy);color:#fff;}
+.logout-btn{width:100%;padding:11px;border-radius:var(--rs);border:none;background:var(--off);color:var(--gray);font-family:'Archivo',sans-serif;font-weight:600;font-size:.9rem;transition:all .2s;}
+.logout-btn:hover{background:#ffe5df;color:var(--coral);}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--tabh)+16px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 22px;border-radius:10px;font-family:'Archivo',sans-serif;font-weight:600;font-size:.88rem;z-index:999;animation:fadeIn .3s,fadeOut .3s 2.2s forwards;box-shadow:0 4px 20px rgba(15,31,61,.25);white-space:nowrap;}
+@keyframes fadeOut{to{opacity:0;pointer-events:none;}}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-logo">launch<span>pad</span></div>
+  <div class="auth-tag">The professional network built for the next generation.</div>
+  <div class="auth-tabs">
+    <div class="auth-tab on" onclick="switchTab('login')">Log In</div>
+    <div class="auth-tab" onclick="switchTab('signup')">Teen Sign Up</div>
+    <div class="auth-tab" onclick="switchTab('business')">Business</div>
+  </div>
+  <!-- LOGIN -->
+  <div class="auth-form" id="login-form">
+    <input type="email" id="l-email" placeholder="Email address"/>
+    <input type="password" id="l-pass" placeholder="Password"/>
+    <input type="text" id="l-admincode" placeholder="Admin code (leave blank if not admin)" style="display:none"/>
+    <button class="auth-btn" onclick="doLogin()">Log In</button>
+    <p class="auth-note">Demo: any valid email + 6+ char password.</p>
+    <p style="color:var(--gray);font-size:.76rem;text-align:center;margin-top:2px;cursor:pointer;text-decoration:underline;text-underline-offset:2px;" onclick="toggleAdminField()">Admin? Enter your code</p>
+  </div>
+  <!-- TEEN SIGNUP -->
+  <div class="auth-form" id="signup-form" style="display:none">
+    <input type="email" id="s-email" placeholder="Email address"/>
+    <input type="password" id="s-pass" placeholder="Password (min 6 chars)"/>
+    <button class="auth-btn" onclick="doSignup()">Continue to Profile Setup</button>
+    <p class="auth-note">Must be 13–19 years old to join.</p>
+  </div>
+  <!-- BUSINESS SIGNUP -->
+  <div class="auth-form" id="business-form" style="display:none">
+    <input type="text" id="b-name" placeholder="Business / Organization name"/>
+    <select id="b-type" style="width:100%;padding:14px 16px;border-radius:var(--rs);border:2px solid var(--navy-mid);background:var(--navy-mid);color:#fff;font-size:.95rem;outline:none;">
+      <option value="">Business type…</option>
+      <option>Company</option><option>Nonprofit</option><option>School / University</option>
+      <option>Government Agency</option><option>Community Organization</option><option>Other</option>
+    </select>
+    <input type="email" id="b-email" placeholder="Contact email"/>
+    <input type="password" id="b-pass" placeholder="Password (min 6 chars)"/>
+    <input type="url" id="b-web" placeholder="Website URL (e.g. https://yourorg.com)"/>
+    <textarea id="b-desc" placeholder="Brief description of your organization…" maxlength="300" style="width:100%;padding:14px 16px;border-radius:var(--rs);border:2px solid var(--navy-mid);background:var(--navy-mid);color:#fff;font-size:.95rem;outline:none;resize:none;min-height:88px;line-height:1.5;font-family:'DM Sans',sans-serif;"></textarea>
+    <button class="auth-btn" onclick="doBusinessSignup()">Submit for Verification</button>
+    <p class="auth-note">Your account will be reviewed by an admin before going live.</p>
+  </div>
+  <div class="auth-err" id="auth-err"></div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="ob-screen">
+  <div class="ob-hdr">
+    <div class="ob-prog-wrap">
+      <div class="ob-prog-bar"><div class="ob-prog-fill" id="ob-prog" style="width:25%"></div></div>
+      <div class="ob-prog-lbl" id="ob-lbl">Step 1 of 4</div>
+    </div>
+  </div>
+  <div class="ob-body">
+
+    <!-- STEP 1: Basics -->
+    <div class="ob-step on" id="obs-1">
+      <div class="ob-title">Let's build your <span>profile</span></div>
+      <div class="ob-field">
+        <div class="ob-lbl">Display Name <span class="ob-req">Required</span></div>
+        <input class="ob-inp" id="ob-name" placeholder="e.g. Aria Patel" maxlength="40" oninput="updateInitPrev()"/>
+        <div class="ob-errmsg" id="ob-name-err">Please enter your display name.</div>
+      </div>
+      <div class="ob-field">
+        <div class="ob-lbl">Username <span class="ob-req">Required</span></div>
+        <input class="ob-inp" id="ob-uname" placeholder="yourhandle" maxlength="20" oninput="cleanUname(this)"/>
+        <div class="ob-errmsg" id="ob-uname-err">3–20 chars, letters / numbers / underscores only.</div>
+      </div>
+      <div class="ob-field">
+        <div class="ob-lbl">Profile Photo <span class="ob-opt">Optional</span></div>
+        <div class="ob-photo-row">
+          <div class="ob-photo-circle" id="ob-photo-circle" onclick="document.getElementById('ob-file').click()">
+            <span id="ob-init-prev">?</span>
+            <div class="ob-photo-ov"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+          </div>
+          <input type="file" id="ob-file" accept="image/*" onchange="handlePhoto(event)"/>
+          <div class="ob-photo-btns">
+            <button class="ob-photo-btn" onclick="document.getElementById('ob-file').click()">Upload photo</button>
+            <button class="ob-photo-btn" onclick="clearPhoto()">Use initials</button>
+          </div>
+        </div>
+      </div>
+      <div class="ob-field">
+        <div class="ob-lbl">Bio <span class="ob-opt">Optional</span></div>
+        <textarea class="ob-inp ob-ta" id="ob-bio" placeholder="A short intro — who you are and what you're working on…" maxlength="200"></textarea>
+      </div>
+      <div class="ob-field">
+        <div class="ob-lbl">Location <span class="ob-opt">Optional — hidden by default</span></div>
+        <input class="ob-inp" id="ob-loc" placeholder="e.g. Denver, CO" maxlength="50"/>
+      </div>
+      <div class="ob-field">
+        <div class="ob-lbl">Website / Portfolio URL <span class="ob-opt">Optional</span></div>
+        <input class="ob-inp" id="ob-web" placeholder="https://yoursite.com" maxlength="100"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: Interests -->
+    <div class="ob-step" id="obs-2">
+      <div class="ob-title">What are you<br><span>into?</span></div>
+      <div class="ob-sub">Pick at least one area of interest — shapes your feed and opportunity matches.</div>
+      <div class="ob-field">
+        <div class="ob-lbl">Areas of Interest <span class="ob-req">Required</span></div>
+        <div class="i-grid" id="i-grid">
+          <div class="i-chip" onclick="toggleI(this,'Technology & Coding')"><span class="ic" data-lucide="cpu"></span>Technology &amp; Coding</div>
+          <div class="i-chip" onclick="toggleI(this,'Arts & Design')"><span class="ic" data-lucide="pen-tool"></span>Arts &amp; Design</div>
+          <div class="i-chip" onclick="toggleI(this,'Business & Entrepreneurship')"><span class="ic" data-lucide="briefcase"></span>Business &amp; Entrepreneurship</div>
+          <div class="i-chip" onclick="toggleI(this,'Science & Research')"><span class="ic" data-lucide="flask-conical"></span>Science &amp; Research</div>
+          <div class="i-chip" onclick="toggleI(this,'Writing & Media')"><span class="ic" data-lucide="file-text"></span>Writing &amp; Media</div>
+          <div class="i-chip" onclick="toggleI(this,'Environment & Activism')"><span class="ic" data-lucide="leaf"></span>Environment &amp; Activism</div>
+          <div class="i-chip" onclick="toggleI(this,'Health & Medicine')"><span class="ic" data-lucide="heart-pulse"></span>Health &amp; Medicine</div>
+          <div class="i-chip" onclick="toggleI(this,'Music & Performance')"><span class="ic" data-lucide="music"></span>Music &amp; Performance</div>
+        </div>
+        <div class="ob-errmsg" id="ob-i-err">Please select at least one interest.</div>
+        <div class="cust-row">
+          <input class="cust-inp" id="ci-inp" placeholder="Add your own interest…" maxlength="30"/>
+          <button class="add-btn" onclick="addCustomI()">+ Add</button>
+        </div>
+        <div class="cust-list" id="ci-list"></div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Professional -->
+    <div class="ob-step" id="obs-3">
+      <div class="ob-title">Your professional<br><span>story</span></div>
+      <div class="ob-sub">Skills, school, and goals. All optional — fill in now or add later from your profile.</div>
+      <div class="ob-field">
+        <div class="ob-lbl">Skills <span class="ob-opt">Type &amp; press Enter</span></div>
+        <div style="display:flex;gap:8px">
+          <input class="ob-inp" id="sk-inp" placeholder="e.g. Figma, Python, Public Speaking…" maxlength="30" onkeydown="if(event.key==='Enter'){event.preventDefault();addSkill();}"/>
+          <button class="add-btn" onclick="addSkill()">+ Add</button>
+        </div>
+        <div class="sk-list" id="sk-list"></div>
+      </div>
+      <div class="ob-field">
+        <div class="ob-lbl">Current School <span class="ob-opt">Optional</span></div>
+        <input class="ob-inp" id="ob-school" placeholder="e.g. Denver East High School" maxlength="60"/>
+      </div>
+      <div class="ob-field">
+        <div class="ob-lbl">Grade / Year <span class="ob-opt">Optional</span></div>
+        <select class="ob-inp" id="ob-grade">
+          <option value="">Select grade…</option>
+          <option>8th Grade</option><option>9th Grade (Freshman)</option>
+          <option>10th Grade (Sophomore)</option><option>11th Grade (Junior)</option>
+          <option>12th Grade (Senior)</option><option>Gap Year</option><option>College Freshman</option>
+        </select>
+      </div>
+      <div class="ob-field">
+        <div class="ob-lbl">Career Goal / Dream Job <span class="ob-opt">Optional</span></div>
+        <input class="ob-inp" id="ob-goal" placeholder="e.g. UX Designer at a game studio" maxlength="100"/>
+      </div>
+    </div>
+
+    <!-- STEP 4: Resume Builder -->
+    <div class="ob-step" id="obs-4">
+      <div class="ob-title">Build your<br><span>resume</span></div>
+      <div class="ob-sub">Add experience, volunteer work, achievements, and projects. All optional — you can always edit from your profile.</div>
+
+      <!-- Sub-section progress dots -->
+      <div class="res-sub-prog" id="res-sub-prog">
+        <div class="res-sub-dot active" id="rdot-0"></div>
+        <div class="res-sub-dot" id="rdot-1"></div>
+        <div class="res-sub-dot" id="rdot-2"></div>
+        <div class="res-sub-dot" id="rdot-3"></div>
+      </div>
+
+      <!-- Work Experience -->
+      <div class="ob-step on" id="res-sec-0">
+        <div class="res-sec-title">Work Experience</div>
+        <div class="res-sec-sub">Internships, part-time jobs, or any paid work you've done.</div>
+        <div class="entry-list" id="work-list"></div>
+        <!-- inline add form -->
+        <div class="entry-form" id="work-form">
+          <div class="entry-form-title">Add Work Experience</div>
+          <div class="ob-field">
+            <div class="ob-lbl">Organization / Employer <span class="ob-req">Required</span></div>
+            <input class="ob-inp" id="wf-org" placeholder="e.g. Adobe Systems" maxlength="60"/>
+            <div class="ob-errmsg" id="wf-org-err">Organization name is required.</div>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Your Role / Title <span class="ob-req">Required</span></div>
+            <input class="ob-inp" id="wf-role" placeholder="e.g. UX Design Intern" maxlength="60"/>
+            <div class="ob-errmsg" id="wf-role-err">Role / title is required.</div>
+          </div>
+          <div class="ef-row">
+            <div style="flex:1">
+              <div class="ob-lbl">Start Date <span class="ob-opt">Optional</span></div>
+              <input class="ob-inp" id="wf-start" placeholder="e.g. June 2024" maxlength="20"/>
+            </div>
+            <div style="flex:1">
+              <div class="ob-lbl">End Date <span class="ob-opt">Optional</span></div>
+              <input class="ob-inp" id="wf-end" placeholder="e.g. Aug 2024 or Present" maxlength="20"/>
+            </div>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Location <span class="ob-opt">Optional</span></div>
+            <input class="ob-inp" id="wf-loc" placeholder="e.g. Remote or Denver, CO" maxlength="50"/>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Description <span class="ob-opt">Optional</span></div>
+            <textarea class="ob-inp ob-ta" id="wf-desc" placeholder="Briefly describe what you did and what you achieved…" maxlength="300" style="min-height:72px"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="ef-save" onclick="saveEntry('work')">Save Entry</button>
+            <button class="ef-cancel" onclick="toggleForm('work',false)">Cancel</button>
+          </div>
+        </div>
+        <button class="add-entry-btn" id="work-add-btn" onclick="toggleForm('work',true)">
+          <span class="ic" data-lucide="plus-circle"></span> Add Work Experience
+        </button>
+      </div>
+
+      <!-- Volunteer -->
+      <div class="ob-step" id="res-sec-1">
+        <div class="res-sec-title">Volunteer Work</div>
+        <div class="res-sec-sub">Community service, club work, or any unpaid contribution.</div>
+        <div class="entry-list" id="vol-list"></div>
+        <div class="entry-form" id="vol-form">
+          <div class="entry-form-title">Add Volunteer Work</div>
+          <div class="ob-field">
+            <div class="ob-lbl">Organization <span class="ob-req">Required</span></div>
+            <input class="ob-inp" id="vf-org" placeholder="e.g. Denver Food Bank" maxlength="60"/>
+            <div class="ob-errmsg" id="vf-org-err">Organization name is required.</div>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Your Role <span class="ob-req">Required</span></div>
+            <input class="ob-inp" id="vf-role" placeholder="e.g. Youth Program Volunteer" maxlength="60"/>
+            <div class="ob-errmsg" id="vf-role-err">Role is required.</div>
+          </div>
+          <div class="ef-row">
+            <div style="flex:1">
+              <div class="ob-lbl">Start Date <span class="ob-opt">Optional</span></div>
+              <input class="ob-inp" id="vf-start" placeholder="e.g. Sep 2023" maxlength="20"/>
+            </div>
+            <div style="flex:1">
+              <div class="ob-lbl">End Date <span class="ob-opt">Optional</span></div>
+              <input class="ob-inp" id="vf-end" placeholder="Present" maxlength="20"/>
+            </div>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Location <span class="ob-opt">Optional</span></div>
+            <input class="ob-inp" id="vf-loc" placeholder="e.g. Denver, CO" maxlength="50"/>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Description <span class="ob-opt">Optional</span></div>
+            <textarea class="ob-inp ob-ta" id="vf-desc" placeholder="What did you do and what impact did you make?" maxlength="300" style="min-height:72px"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="ef-save" onclick="saveEntry('vol')">Save Entry</button>
+            <button class="ef-cancel" onclick="toggleForm('vol',false)">Cancel</button>
+          </div>
+        </div>
+        <button class="add-entry-btn" id="vol-add-btn" onclick="toggleForm('vol',true)">
+          <span class="ic" data-lucide="plus-circle"></span> Add Volunteer Work
+        </button>
+      </div>
+
+      <!-- Awards -->
+      <div class="ob-step" id="res-sec-2">
+        <div class="res-sec-title">Awards &amp; Achievements</div>
+        <div class="res-sec-sub">Competitions, honors, recognitions — anything you're proud of.</div>
+        <div class="entry-list" id="award-list"></div>
+        <div class="entry-form" id="award-form">
+          <div class="entry-form-title">Add Award or Achievement</div>
+          <div class="ob-field">
+            <div class="ob-lbl">Award / Achievement Name <span class="ob-req">Required</span></div>
+            <input class="ob-inp" id="af-title" placeholder="e.g. 2nd Place — HackDenver 2024" maxlength="80"/>
+            <div class="ob-errmsg" id="af-title-err">Award name is required.</div>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Issuing Organization <span class="ob-req">Required</span></div>
+            <input class="ob-inp" id="af-org" placeholder="e.g. HackDenver" maxlength="60"/>
+            <div class="ob-errmsg" id="af-org-err">Issuing organization is required.</div>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Date <span class="ob-opt">Optional</span></div>
+            <input class="ob-inp" id="af-date" placeholder="e.g. October 2024" maxlength="30"/>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Description <span class="ob-opt">Optional</span></div>
+            <textarea class="ob-inp ob-ta" id="af-desc" placeholder="Brief context or what it means to you…" maxlength="200" style="min-height:68px"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="ef-save" onclick="saveEntry('award')">Save Entry</button>
+            <button class="ef-cancel" onclick="toggleForm('award',false)">Cancel</button>
+          </div>
+        </div>
+        <button class="add-entry-btn" id="award-add-btn" onclick="toggleForm('award',true)">
+          <span class="ic" data-lucide="plus-circle"></span> Add Award or Achievement
+        </button>
+      </div>
+
+      <!-- Projects -->
+      <div class="ob-step" id="res-sec-3">
+        <div class="res-sec-title">Projects</div>
+        <div class="res-sec-sub">Personal builds, school projects, hackathon entries, anything you've created.</div>
+        <div class="entry-list" id="proj-list"></div>
+        <div class="entry-form" id="proj-form">
+          <div class="entry-form-title">Add Project</div>
+          <div class="ob-field">
+            <div class="ob-lbl">Project Name <span class="ob-req">Required</span></div>
+            <input class="ob-inp" id="pf-name" placeholder="e.g. StudyBuddy App" maxlength="60"/>
+            <div class="ob-errmsg" id="pf-name-err">Project name is required.</div>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Your Role <span class="ob-req">Required</span></div>
+            <input class="ob-inp" id="pf-role" placeholder="e.g. Solo Developer, Lead Designer…" maxlength="60"/>
+            <div class="ob-errmsg" id="pf-role-err">Your role is required.</div>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Date / Year <span class="ob-opt">Optional</span></div>
+            <input class="ob-inp" id="pf-date" placeholder="e.g. Spring 2024" maxlength="30"/>
+          </div>
+          <div class="ob-field">
+            <div class="ob-lbl">Description <span class="ob-opt">Optional</span></div>
+            <textarea class="ob-inp ob-ta" id="pf-desc" placeholder="What did you build? What problem did it solve?" maxlength="300" style="min-height:72px"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="ef-save" onclick="saveEntry('proj')">Save Entry</button>
+            <button class="ef-cancel" onclick="toggleForm('proj',false)">Cancel</button>
+          </div>
+        </div>
+        <button class="add-entry-btn" id="proj-add-btn" onclick="toggleForm('proj',true)">
+          <span class="ic" data-lucide="plus-circle"></span> Add Project
+        </button>
+      </div>
+
+    </div><!-- end obs-4 -->
+
+  </div><!-- ob-body -->
+  <div class="ob-footer">
+    <button class="ob-back" id="ob-back" style="display:none" onclick="obBack()">Back</button>
+    <button class="ob-next" id="ob-next" onclick="obNext()">Next</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="top-bar">
+    <div class="top-logo">launch<span>pad</span></div>
+    <div class="top-av" id="top-av" onclick="goTab('profile')"></div>
+  </div>
+
+  <!-- FEED -->
+  <div class="page on" id="page-feed" style="padding-top:2px">
+    <div class="stories-wrap">
+      <div class="stories-row" id="stories-row"></div>
+    </div>
+    <div id="posts-wrap"></div>
+  </div>
+
+  <!-- CREATE PAGE -->
+  <div class="page" id="page-create">
+    <div class="feed-hdr"><h2>Create</h2><p>Share a post or add to your story</p></div>
+    <div style="padding:0 18px 18px">
+      <!-- Post composer -->
+      <div style="background:#fff;border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin-bottom:16px">
+        <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px"><span class="ic" style="--icsz:18px" data-lucide="edit-3"></span>New Post</div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div class="compose-av" id="compose-av"></div>
+          <textarea class="compose-txt" id="compose-txt" placeholder="Share something with your network…" rows="3" style="flex:1;border:none;outline:none;background:var(--off);border-radius:10px;padding:11px 14px;font-size:.9rem;resize:none;color:var(--navy);width:100%;"></textarea>
+        </div>
+        <div class="compose-imgs-strip" id="compose-imgs-strip"></div>
+        <input type="file" id="post-img-input" accept="image/*" multiple style="display:none" onchange="handlePostImages(event)"/>
+        <div class="compose-acts" style="margin-top:12px">
+          <button class="cmp-btn" id="compose-photo-btn" onclick="document.getElementById('post-img-input').click()"><span class="ic" data-lucide="image"></span> Photo</button>
+          <button class="cmp-btn" onclick="toast('Link preview coming soon!')"><span class="ic" data-lucide="link"></span> Link</button>
+          <button class="post-btn" onclick="createPost()">Post</button>
+        </div>
+      </div>
+      <!-- Story composer -->
+      <div style="background:#fff;border-radius:var(--r);padding:18px;box-shadow:var(--shadow)">
+        <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:8px"><span class="ic" style="--icsz:18px" data-lucide="layout"></span>New Story</div>
+        <p style="font-size:.84rem;color:var(--gray);margin-bottom:14px;line-height:1.5">Stories stay visible for 24 hours.</p>
+        <textarea id="story-txt" placeholder="Write something for your story…" rows="3" style="width:100%;border:1.5px solid var(--gray-light);border-radius:10px;padding:11px 14px;font-size:.9rem;resize:none;color:var(--navy);outline:none;font-family:'DM Sans',sans-serif;transition:border .2s;" onfocus="this.style.borderColor='var(--coral)'" onblur="this.style.borderColor='var(--gray-light)'"></textarea>
+        <!-- story image preview -->
+        <div id="story-img-preview" style="display:none;margin-top:10px;position:relative;width:100%;border-radius:12px;overflow:hidden;">
+          <img id="story-img-el" src="" alt="" style="width:100%;max-height:200px;object-fit:cover;display:block;border-radius:12px;"/>
+          <button onclick="removeStoryImage()" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.55);border:none;color:#fff;font-size:.8rem;display:flex;align-items:center;justify-content:center;cursor:pointer;">✕</button>
+        </div>
+        <input type="file" id="story-img-input" accept="image/*" style="display:none" onchange="handleStoryImage(event)"/>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+          <button class="cmp-btn" onclick="document.getElementById('story-img-input').click()"><span class="ic" data-lucide="image"></span> Add Photo</button>
+          <button class="post-btn" onclick="createStory()" style="display:flex;align-items:center;gap:6px"><span class="ic" style="--icsz:15px;color:#fff" data-lucide="layout"></span>Share Story</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="page" id="page-messages">
+    <div class="msgs-wrap"><h2>Messages</h2><div id="msg-list"></div></div>
+  </div>
+
+  <!-- JOBS -->
+  <div class="page" id="page-jobs">
+    <div class="jobs-hdr"><h2>Opportunities</h2><p>Jobs, volunteering &amp; mentorship for teens</p></div>
+    <div class="filters-row">
+      <div class="f-chip on" onclick="filterJobs(this,'all')">All</div>
+      <div class="f-chip" onclick="filterJobs(this,'job')">Internships</div>
+      <div class="f-chip" onclick="filterJobs(this,'volunteer')">Volunteer</div>
+      <div class="f-chip" onclick="filterJobs(this,'mentorship')">Mentorship</div>
+      <div class="f-chip" onclick="filterJobs(this,'project')">Projects</div>
+    </div>
+    <div id="jobs-wrap"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="page" id="page-profile">
+    <div class="p-hero">
+      <div class="p-av" id="p-av"></div>
+      <div class="p-name" id="p-name"></div>
+      <div class="p-uname" id="p-uname"></div>
+      <div class="p-headline" id="p-headline"></div>
+      <div class="p-loc" id="p-loc" style="display:none"><span class="ic" data-lucide="map-pin"></span><span id="p-loc-txt"></span></div>
+      <div class="p-badges" id="p-badges"></div>
+    </div>
+    <div class="p-body">
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-n" id="stat-posts">0</div><div class="stat-l">Posts</div></div>
+      </div>
+      <button class="edit-btn" onclick="openEditModal()">Edit Profile</button>
+      <div class="p-sec" id="sec-bio" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="user"></span>About</div>
+        <p class="bio-txt" id="p-bio"></p>
+      </div>
+      <div class="p-sec" id="sec-goal" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="target"></span>Career Goal</div>
+        <div class="goal-card"><div class="goal-lbl">Dream Job</div><p id="p-goal"></p></div>
+      </div>
+      <div class="p-sec" id="sec-interests" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="sparkles"></span>Interests</div>
+        <div class="skills-wrap" id="p-interests"></div>
+      </div>
+      <div class="p-sec" id="sec-skills" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="zap"></span>Skills</div>
+        <div class="skills-wrap" id="p-skills"></div>
+      </div>
+      <div class="p-sec" id="sec-school" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="graduation-cap"></span>Education</div>
+        <div class="school-card"><span class="ic" data-lucide="building-2"></span><div><div class="school-name" id="p-school"></div><div class="school-grade" id="p-grade"></div></div></div>
+      </div>
+      <div class="p-sec" id="sec-work" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="briefcase"></span>Work Experience</div>
+        <div id="p-work"></div>
+      </div>
+      <div class="p-sec" id="sec-vol" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="heart"></span>Volunteer Work</div>
+        <div id="p-vol"></div>
+      </div>
+      <div class="p-sec" id="sec-awards" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="award"></span>Awards &amp; Achievements</div>
+        <div id="p-awards"></div>
+      </div>
+      <div class="p-sec" id="sec-proj" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="rocket"></span>Projects</div>
+        <div id="p-proj"></div>
+      </div>
+      <div class="p-sec" id="sec-portfolio" style="display:none">
+        <div class="p-sec-hdr"><span class="ic" data-lucide="link"></span>Website</div>
+        <div class="port-item" onclick="toast('Opening link…')">
+          <div class="port-title">Personal Website</div>
+          <div class="port-link"><span class="ic" data-lucide="external-link"></span><span id="p-web"></span></div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Log Out</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PAGE (only visible when logged in as admin) -->
+  <div class="page" id="page-admin">
+    <div class="admin-page">
+      <div class="admin-hdr">
+        <h2>Admin Panel</h2>
+        <span class="admin-badge">Admin</span>
+      </div>
+      <div class="admin-tabs">
+        <button class="admin-tab on" onclick="switchAdminTab(this,'admin-pending')">Pending</button>
+        <button class="admin-tab" onclick="switchAdminTab(this,'admin-approved')">Approved</button>
+      </div>
+      <div class="admin-section on" id="admin-pending"></div>
+      <div class="admin-section" id="admin-approved"></div>
+    </div>
+  </div>
+
+  <div class="bot-tabs" id="bot-tabs">
+    <!-- rendered by renderBotTabs() -->
+  </div>
+</div>
+
+<!-- BUSINESS PENDING SCREEN -->
+<div id="biz-pending-screen" style="display:none">
+  <div class="biz-pending">
+    <div class="biz-pending-icon"><span class="ic" data-lucide="clock"></span></div>
+    <h2>Application Submitted</h2>
+    <p>Your business account is under review. An admin will verify your organization before your account goes live. This usually takes 1–2 business days.</p>
+    <div class="biz-pending-badge"><span class="ic" data-lucide="shield"></span>Pending Verification</div>
+    <button class="auth-btn" style="width:100%;max-width:320px" onclick="backToAuth()">Back to Log In</button>
+  </div>
+</div>
+
+<!-- BUSINESS APP -->
+<div id="biz-app">
+  <div class="top-bar">
+    <div class="top-logo">launch<span>pad</span></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="biz-vbadge" style="margin:0"><span class="ic" data-lucide="badge-check"></span>Verified Business</div>
+      <div class="top-av" id="biz-top-av" onclick="bizGoTab('profile')"></div>
+    </div>
+  </div>
+
+  <!-- BIZ PROFILE PAGE -->
+  <div class="page on" id="biz-page-profile">
+    <div class="biz-hero">
+      <div class="biz-logo-circle" id="biz-logo-circle"></div>
+      <div class="biz-org-name" id="biz-org-name"></div>
+      <div class="biz-org-type" id="biz-org-type"></div>
+      <div class="biz-org-desc" id="biz-org-desc"></div>
+      <div class="biz-vbadge"><span class="ic" data-lucide="badge-check"></span>Verified Organization</div>
+    </div>
+    <div class="biz-body">
+      <div class="biz-sect-hdr"><span class="ic" data-lucide="briefcase"></span>Our Postings</div>
+      <div id="biz-own-jobs"></div>
+      <p id="biz-no-jobs" style="color:var(--gray);font-size:.88rem;text-align:center;padding:20px 0">No postings yet — go to Post a Job to get started.</p>
+      <div style="margin-top:8px">
+        <button class="pj-submit" onclick="bizGoTab('post')" style="display:flex;align-items:center;justify-content:center;gap:8px"><span class="ic" style="--icsz:16px;color:#fff" data-lucide="plus-circle"></span>Post an Opportunity</button>
+      </div>
+      <div style="margin-top:18px">
+        <button class="logout-btn" onclick="doLogout()">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BIZ POST JOB PAGE -->
+  <div class="page" id="biz-page-post">
+    <div class="biz-body" style="padding-top:20px">
+      <div class="biz-sect-hdr"><span class="ic" data-lucide="plus-circle"></span>Post an Opportunity</div>
+      <div class="post-job-card">
+        <div class="pj-field">
+          <div class="pj-lbl">Title <span class="pj-req">Required</span></div>
+          <input class="pj-inp" id="pj-title" placeholder="e.g. UX Design Intern" maxlength="80"/>
+          <div class="pj-errmsg" id="pj-title-err">Title is required.</div>
+        </div>
+        <div class="pj-field">
+          <div class="pj-lbl">Type <span class="pj-req">Required</span></div>
+          <select class="pj-inp" id="pj-type">
+            <option value="">Select type…</option>
+            <option value="job">Internship / Job</option>
+            <option value="volunteer">Volunteer</option>
+            <option value="mentorship">Mentorship</option>
+            <option value="project">Project</option>
+          </select>
+          <div class="pj-errmsg" id="pj-type-err">Please select a type.</div>
+        </div>
+        <div class="pj-field">
+          <div class="pj-lbl">Tags <span style="color:var(--gray);font-size:.67rem;font-weight:400">Comma-separated, e.g. Remote, Paid</span></div>
+          <input class="pj-inp" id="pj-tags" placeholder="e.g. Remote, Paid, Summer 2025" maxlength="100"/>
+        </div>
+        <div class="pj-field">
+          <div class="pj-lbl">Description <span class="pj-req">Required</span></div>
+          <textarea class="pj-inp pj-ta" id="pj-desc" placeholder="Describe the role, requirements, and what teens will gain…" maxlength="400"></textarea>
+          <div class="pj-errmsg" id="pj-desc-err">Description is required.</div>
+        </div>
+        <div class="pj-field">
+          <div class="pj-lbl">Application Deadline <span style="color:var(--gray);font-size:.67rem;font-weight:400">Optional</span></div>
+          <input class="pj-inp" id="pj-dl" placeholder="e.g. Apply by May 31" maxlength="50"/>
+        </div>
+        <button class="pj-submit" onclick="postJob()">Post Opportunity</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="biz-bot-tabs">
+    <button class="t-btn on" id="biz-tab-profile" onclick="bizGoTab('profile')"><span class="ic" data-lucide="building-2"></span></button>
+    <button class="t-btn" id="biz-tab-post" onclick="bizGoTab('post')"><span class="ic" data-lucide="plus-square"></span></button>
+  </div>
+</div>
+
+<!-- ADMIN TAB (injected into main app's bottom tabs dynamically) -->
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lightbox-close" onclick="closeLightbox()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <img id="lightbox-img" src="" alt=""/>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div id="edit-modal">
+  <div class="em-backdrop" onclick="closeEditModal()"></div>
+  <div class="em-sheet">
+    <div class="em-hdr">
+      <div class="em-title">Edit Profile</div>
+      <button class="em-close" onclick="closeEditModal()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="em-tabs">
+      <button class="em-tab on" onclick="switchEmTab(this,'em-basics')">Basics</button>
+      <button class="em-tab" onclick="switchEmTab(this,'em-interests')">Interests</button>
+      <button class="em-tab" onclick="switchEmTab(this,'em-professional')">Professional</button>
+      <button class="em-tab" onclick="switchEmTab(this,'em-resume')">Resume</button>
+    </div>
+    <div class="em-body">
+
+      <!-- BASICS -->
+      <div class="em-section on" id="em-basics">
+        <div class="em-field">
+          <div class="em-lbl">Profile Photo</div>
+          <div class="em-photo-row">
+            <div class="em-photo-circle" id="em-photo-circle" onclick="document.getElementById('em-file').click()">
+              <span id="em-init-prev">?</span>
+              <div class="em-photo-ov"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+            </div>
+            <input type="file" id="em-file" accept="image/*" onchange="handleEmPhoto(event)"/>
+            <div class="em-photo-btns">
+              <button class="em-photo-btn" onclick="document.getElementById('em-file').click()">Upload photo</button>
+              <button class="em-photo-btn" onclick="clearEmPhoto()">Use initials</button>
+            </div>
+          </div>
+        </div>
+        <div class="em-field">
+          <div class="em-lbl">Display Name <span class="ob-req">Required</span></div>
+          <input class="em-inp" id="em-name" placeholder="Your name" maxlength="40"/>
+          <div class="ob-errmsg" id="em-name-err">Display name is required.</div>
+        </div>
+        <div class="em-field">
+          <div class="em-lbl">Username <span class="ob-req">Required</span></div>
+          <input class="em-inp" id="em-uname" placeholder="yourhandle" maxlength="20" oninput="cleanUname(this)"/>
+          <div class="ob-errmsg" id="em-uname-err">3–20 chars, letters / numbers / underscores only.</div>
+        </div>
+        <div class="em-field">
+          <div class="em-lbl">Bio <span class="ob-opt">Optional</span></div>
+          <textarea class="em-inp em-ta" id="em-bio" placeholder="A short intro about you…" maxlength="200"></textarea>
+        </div>
+        <div class="em-field">
+          <div class="em-lbl">Location <span class="ob-opt">Optional — hidden by default</span></div>
+          <input class="em-inp" id="em-loc" placeholder="e.g. Denver, CO" maxlength="50"/>
+        </div>
+        <div class="em-field">
+          <div class="em-lbl">Website / Portfolio URL <span class="ob-opt">Optional</span></div>
+          <input class="em-inp" id="em-web" placeholder="https://yoursite.com" maxlength="100"/>
+        </div>
+        <button class="em-save-btn" onclick="saveEmSection('basics')">Save Changes</button>
+      </div>
+
+      <!-- INTERESTS -->
+      <div class="em-section" id="em-interests">
+        <div class="em-field">
+          <div class="em-lbl">Areas of Interest <span class="ob-req">At least one required</span></div>
+          <div class="em-i-grid" id="em-i-grid">
+            <div class="i-chip" onclick="toggleEmI(this,'Technology & Coding')"><span class="ic" data-lucide="cpu"></span>Technology &amp; Coding</div>
+            <div class="i-chip" onclick="toggleEmI(this,'Arts & Design')"><span class="ic" data-lucide="pen-tool"></span>Arts &amp; Design</div>
+            <div class="i-chip" onclick="toggleEmI(this,'Business & Entrepreneurship')"><span class="ic" data-lucide="briefcase"></span>Business &amp; Entrepreneurship</div>
+            <div class="i-chip" onclick="toggleEmI(this,'Science & Research')"><span class="ic" data-lucide="flask-conical"></span>Science &amp; Research</div>
+            <div class="i-chip" onclick="toggleEmI(this,'Writing & Media')"><span class="ic" data-lucide="file-text"></span>Writing &amp; Media</div>
+            <div class="i-chip" onclick="toggleEmI(this,'Environment & Activism')"><span class="ic" data-lucide="leaf"></span>Environment &amp; Activism</div>
+            <div class="i-chip" onclick="toggleEmI(this,'Health & Medicine')"><span class="ic" data-lucide="heart-pulse"></span>Health &amp; Medicine</div>
+            <div class="i-chip" onclick="toggleEmI(this,'Music & Performance')"><span class="ic" data-lucide="music"></span>Music &amp; Performance</div>
+          </div>
+          <div class="ob-errmsg" id="em-i-err">Please select at least one interest.</div>
+          <div class="cust-row">
+            <input class="cust-inp" id="em-ci-inp" placeholder="Add your own…" maxlength="30"/>
+            <button class="add-btn" onclick="addEmCustomI()">+ Add</button>
+          </div>
+          <div class="cust-list" id="em-ci-list"></div>
+        </div>
+        <button class="em-save-btn" onclick="saveEmSection('interests')">Save Changes</button>
+      </div>
+
+      <!-- PROFESSIONAL -->
+      <div class="em-section" id="em-professional">
+        <div class="em-field">
+          <div class="em-lbl">Skills <span class="ob-opt">Type &amp; press Enter</span></div>
+          <div style="display:flex;gap:8px">
+            <input class="em-inp" id="em-sk-inp" placeholder="e.g. Figma, Python…" maxlength="30" onkeydown="if(event.key==='Enter'){event.preventDefault();addEmSkill();}"/>
+            <button class="add-btn" onclick="addEmSkill()">+ Add</button>
+          </div>
+          <div class="em-sk-list" id="em-sk-list"></div>
+        </div>
+        <div class="em-field">
+          <div class="em-lbl">Current School <span class="ob-opt">Optional</span></div>
+          <input class="em-inp" id="em-school" placeholder="e.g. Denver East High School" maxlength="60"/>
+        </div>
+        <div class="em-field">
+          <div class="em-lbl">Grade / Year <span class="ob-opt">Optional</span></div>
+          <select class="em-inp" id="em-grade">
+            <option value="">Select grade…</option>
+            <option>8th Grade</option><option>9th Grade (Freshman)</option>
+            <option>10th Grade (Sophomore)</option><option>11th Grade (Junior)</option>
+            <option>12th Grade (Senior)</option><option>Gap Year</option><option>College Freshman</option>
+          </select>
+        </div>
+        <div class="em-field">
+          <div class="em-lbl">Career Goal / Dream Job <span class="ob-opt">Optional</span></div>
+          <input class="em-inp" id="em-goal" placeholder="e.g. UX Designer at a game studio" maxlength="100"/>
+        </div>
+        <button class="em-save-btn" onclick="saveEmSection('professional')">Save Changes</button>
+      </div>
+
+      <!-- RESUME -->
+      <div class="em-section" id="em-resume">
+        <div style="margin-bottom:18px">
+          <div class="res-sec-title" style="font-size:1rem;margin-bottom:4px">Work Experience</div>
+          <div class="entry-list" id="em-work-list"></div>
+          <div class="entry-form" id="em-work-form">
+            <div class="entry-form-title">Add Work Experience</div>
+            <div class="ob-field"><div class="ob-lbl">Organization <span class="ob-req">Required</span></div><input class="ob-inp" id="emwf-org" placeholder="e.g. Adobe Systems" maxlength="60"/><div class="ob-errmsg" id="emwf-org-err">Required.</div></div>
+            <div class="ob-field"><div class="ob-lbl">Role / Title <span class="ob-req">Required</span></div><input class="ob-inp" id="emwf-role" placeholder="e.g. UX Design Intern" maxlength="60"/><div class="ob-errmsg" id="emwf-role-err">Required.</div></div>
+            <div class="ef-row"><div style="flex:1"><div class="ob-lbl">Start <span class="ob-opt">Optional</span></div><input class="ob-inp" id="emwf-start" placeholder="June 2024" maxlength="20"/></div><div style="flex:1"><div class="ob-lbl">End <span class="ob-opt">Optional</span></div><input class="ob-inp" id="emwf-end" placeholder="Present" maxlength="20"/></div></div>
+            <div class="ob-field"><div class="ob-lbl">Location <span class="ob-opt">Optional</span></div><input class="ob-inp" id="emwf-loc" placeholder="Remote or Denver, CO" maxlength="50"/></div>
+            <div class="ob-field"><div class="ob-lbl">Description <span class="ob-opt">Optional</span></div><textarea class="ob-inp ob-ta" id="emwf-desc" placeholder="What did you do?" maxlength="300" style="min-height:68px"></textarea></div>
+            <div style="display:flex;gap:8px;margin-top:4px"><button class="ef-save" onclick="saveEmEntry('work')">Save</button><button class="ef-cancel" onclick="toggleEmForm('work',false)">Cancel</button></div>
+          </div>
+          <button class="add-entry-btn" id="em-work-add-btn" onclick="toggleEmForm('work',true)"><span class="ic" data-lucide="plus-circle"></span> Add Work Experience</button>
+        </div>
+        <div style="margin-bottom:18px">
+          <div class="res-sec-title" style="font-size:1rem;margin-bottom:4px">Volunteer Work</div>
+          <div class="entry-list" id="em-vol-list"></div>
+          <div class="entry-form" id="em-vol-form">
+            <div class="entry-form-title">Add Volunteer Work</div>
+            <div class="ob-field"><div class="ob-lbl">Organization <span class="ob-req">Required</span></div><input class="ob-inp" id="emvf-org" placeholder="e.g. Denver Food Bank" maxlength="60"/><div class="ob-errmsg" id="emvf-org-err">Required.</div></div>
+            <div class="ob-field"><div class="ob-lbl">Role <span class="ob-req">Required</span></div><input class="ob-inp" id="emvf-role" placeholder="e.g. Youth Program Volunteer" maxlength="60"/><div class="ob-errmsg" id="emvf-role-err">Required.</div></div>
+            <div class="ef-row"><div style="flex:1"><div class="ob-lbl">Start <span class="ob-opt">Optional</span></div><input class="ob-inp" id="emvf-start" placeholder="Sep 2023" maxlength="20"/></div><div style="flex:1"><div class="ob-lbl">End <span class="ob-opt">Optional</span></div><input class="ob-inp" id="emvf-end" placeholder="Present" maxlength="20"/></div></div>
+            <div class="ob-field"><div class="ob-lbl">Location <span class="ob-opt">Optional</span></div><input class="ob-inp" id="emvf-loc" placeholder="Denver, CO" maxlength="50"/></div>
+            <div class="ob-field"><div class="ob-lbl">Description <span class="ob-opt">Optional</span></div><textarea class="ob-inp ob-ta" id="emvf-desc" placeholder="What did you do?" maxlength="300" style="min-height:68px"></textarea></div>
+            <div style="display:flex;gap:8px;margin-top:4px"><button class="ef-save" onclick="saveEmEntry('vol')">Save</button><button class="ef-cancel" onclick="toggleEmForm('vol',false)">Cancel</button></div>
+          </div>
+          <button class="add-entry-btn" id="em-vol-add-btn" onclick="toggleEmForm('vol',true)"><span class="ic" data-lucide="plus-circle"></span> Add Volunteer Work</button>
+        </div>
+        <div style="margin-bottom:18px">
+          <div class="res-sec-title" style="font-size:1rem;margin-bottom:4px">Awards &amp; Achievements</div>
+          <div class="entry-list" id="em-award-list"></div>
+          <div class="entry-form" id="em-award-form">
+            <div class="entry-form-title">Add Award</div>
+            <div class="ob-field"><div class="ob-lbl">Award Name <span class="ob-req">Required</span></div><input class="ob-inp" id="emaf-title" placeholder="e.g. 2nd Place — HackDenver" maxlength="80"/><div class="ob-errmsg" id="emaf-title-err">Required.</div></div>
+            <div class="ob-field"><div class="ob-lbl">Organization <span class="ob-req">Required</span></div><input class="ob-inp" id="emaf-org" placeholder="e.g. HackDenver" maxlength="60"/><div class="ob-errmsg" id="emaf-org-err">Required.</div></div>
+            <div class="ob-field"><div class="ob-lbl">Date <span class="ob-opt">Optional</span></div><input class="ob-inp" id="emaf-date" placeholder="October 2024" maxlength="30"/></div>
+            <div class="ob-field"><div class="ob-lbl">Description <span class="ob-opt">Optional</span></div><textarea class="ob-inp ob-ta" id="emaf-desc" placeholder="Brief context…" maxlength="200" style="min-height:64px"></textarea></div>
+            <div style="display:flex;gap:8px;margin-top:4px"><button class="ef-save" onclick="saveEmEntry('award')">Save</button><button class="ef-cancel" onclick="toggleEmForm('award',false)">Cancel</button></div>
+          </div>
+          <button class="add-entry-btn" id="em-award-add-btn" onclick="toggleEmForm('award',true)"><span class="ic" data-lucide="plus-circle"></span> Add Award</button>
+        </div>
+        <div style="margin-bottom:18px">
+          <div class="res-sec-title" style="font-size:1rem;margin-bottom:4px">Projects</div>
+          <div class="entry-list" id="em-proj-list"></div>
+          <div class="entry-form" id="em-proj-form">
+            <div class="entry-form-title">Add Project</div>
+            <div class="ob-field"><div class="ob-lbl">Project Name <span class="ob-req">Required</span></div><input class="ob-inp" id="empf-name" placeholder="e.g. StudyBuddy App" maxlength="60"/><div class="ob-errmsg" id="empf-name-err">Required.</div></div>
+            <div class="ob-field"><div class="ob-lbl">Your Role <span class="ob-req">Required</span></div><input class="ob-inp" id="empf-role" placeholder="e.g. Solo Developer" maxlength="60"/><div class="ob-errmsg" id="empf-role-err">Required.</div></div>
+            <div class="ob-field"><div class="ob-lbl">Date / Year <span class="ob-opt">Optional</span></div><input class="ob-inp" id="empf-date" placeholder="Spring 2024" maxlength="30"/></div>
+            <div class="ob-field"><div class="ob-lbl">Description <span class="ob-opt">Optional</span></div><textarea class="ob-inp ob-ta" id="empf-desc" placeholder="What did you build?" maxlength="300" style="min-height:68px"></textarea></div>
+            <div style="display:flex;gap:8px;margin-top:4px"><button class="ef-save" onclick="saveEmEntry('proj')">Save</button><button class="ef-cancel" onclick="toggleEmForm('proj',false)">Cancel</button></div>
+          </div>
+          <button class="add-entry-btn" id="em-proj-add-btn" onclick="toggleEmForm('proj',true)"><span class="ic" data-lucide="plus-circle"></span> Add Project</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div id="chat-view">
+  <div class="chat-hdr">
+    <button class="chat-back" onclick="closeChat()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="b-av" id="chat-av" style="width:38px;height:38px;font-size:.85rem;font-family:'Archivo',sans-serif;font-weight:700;flex-shrink:0;overflow:hidden;border-radius:50%;background:var(--navy-light);color:#fff;display:flex;align-items:center;justify-content:center;"></div>
+    <div class="chat-nm" id="chat-nm"></div>
+  </div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="chat-inp-row">
+    <input class="chat-inp" id="chat-inp" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="chat-send" onclick="sendChat()"><span class="ic" data-lucide="send"></span></button>
+  </div>
+</div>
+
+<!-- STORY VIEWER -->
+<div id="story-viewer">
+  <!-- pinned top: progress bars + user header -->
+  <div class="sv-top">
+    <div class="sv-bars" id="sv-bars"></div>
+    <div class="sv-head">
+      <div class="sv-av" id="sv-av"></div>
+      <div><div class="sv-name" id="sv-name"></div><div class="sv-time" id="sv-time"></div></div>
+      <button class="sv-x" onclick="closeStory()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+  </div>
+  <!-- centered content -->
+  <div class="sv-center">
+    <div class="sv-img" id="sv-img" style="display:none"><img id="sv-img-el" src="" alt=""/></div>
+    <div class="sv-body" id="sv-body"></div>
+    <div class="sv-orig" id="sv-orig"></div>
+  </div>
+  <!-- tap zones -->
+  <div class="sv-tap-zones">
+    <div class="sv-tap-prev" onclick="svNav(-1)"></div>
+    <div class="sv-tap-next" onclick="svNav(1)"></div>
+  </div>
+</div>
+
+<!-- IMAGE CROPPER -->
+<div id="cropper-modal">
+  <div class="cropper-title" id="cropper-title">Crop & Zoom</div>
+  <div class="cropper-viewport" id="cropper-viewport">
+    <img id="cropper-img" src="" alt="" draggable="false"/>
+  </div>
+  <div class="cropper-hint">Drag to reposition</div>
+  <div class="cropper-zoom-row">
+    <span class="ic" data-lucide="minus"></span>
+    <input type="range" class="cropper-zoom-slider" id="cropper-zoom" min="1" max="3" step="0.01" value="1" oninput="cropperSetZoom(this.value)"/>
+    <span class="ic" data-lucide="plus"></span>
+  </div>
+  <div class="cropper-actions">
+    <button class="cropper-cancel" onclick="cropperCancel()">Cancel</button>
+    <button class="cropper-apply" onclick="cropperApply()">Apply</button>
+  </div>
+</div>
+
+<!-- Firebase SDK — must load before main script -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCc4KPF3FLYJPYkod0Ky86NKtQ3Pgf_GLw",
+  authDomain: "launchpad-800d0.firebaseapp.com",
+  projectId: "launchpad-800d0",
+  storageBucket: "launchpad-800d0.firebasestorage.app",
+  messagingSenderId: "583373031583",
+  appId: "1:583373031583:web:20a49fb3296a2096f1faaa"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+// ── STATE ──
+let CU=null,obStep=1,resSubStep=0,obData={},selI=[],custI=[],userSkills=[],photoData=null;
+let posts=[],stories=[],storyTimer=null,activeCUID=null,jobFilter='all',myPostCount=0;
+let resume={work:[],vol:[],awards:[],proj:[]};
+// edit modal state
+let emSelI=[],emCustI=[],emSkills=[],emPhotoData='__keep__';
+
+const SAMPLE_STORIES=[
+  {id:9001,uid:1,postId:null,body:"Spent the morning sketching new component concepts for our design system. Sometimes the best ideas come with pencil on paper before you ever open Figma.",ts:Date.now()-1800000,seen:false},
+  {id:9002,uid:2,body:"Hit 1,200 downloads on StudyBuddy today — five months ago this app only existed in my notes app. Keep building.",ts:Date.now()-3600000,seen:false},
+  {id:9003,uid:3,body:"Just got back from our tree-planting session. 47 trees down, 453 to go. Every single one counts.",ts:Date.now()-7200000,seen:false},
+  {id:9004,uid:4,body:"Finally got the new feature branch passing all tests after two days of debugging. That feeling is unmatched.",ts:Date.now()-10800000,seen:false},
+];
+
+const BANNED=['sex','porn','nude','naked','drug','kill','murder','suicide','racist','fuck','shit','bitch','cock','dick','pussy','cunt','nigger','faggot','slut','whore','rape','molest','pedophile'];
+const RES_SECS=['work','vol','award','proj'];
+
+const USERS=[
+  {id:1,name:"Aria Patel",username:"@ariapatel",ini:"AP",title:"UX Design Intern @ Adobe",photo:null},
+  {id:2,name:"Marcus Chen",username:"@marcuschen",ini:"MC",title:"Teen Entrepreneur | App Builder",photo:null},
+  {id:3,name:"Simone Torres",username:"@simonetorres",ini:"ST",title:"Environmental Activist & Writer",photo:null},
+  {id:4,name:"Devlin Park",username:"@devlinpark",ini:"DP",title:"Junior Developer | Hackathon Winner",photo:null},
+];
+const SAMPLE_POSTS=[
+  {id:1,uid:1,body:"Just wrapped up my first UX internship project — redesigned the onboarding flow for 500K users. Never thought I'd be doing this at 17!",time:"2h ago",comments:[{uid:2,txt:"That's incredible, Aria! Would love to see the case study."},{uid:3,txt:"So inspiring! Keep going"}],shares:4,repostedBy:[]},
+  {id:2,uid:2,body:"My app StudyBuddy just hit 1,000 downloads on the App Store. Built it solo in 3 months after school. Proof that age is just a number.",time:"5h ago",comments:[{uid:4,txt:"Congrats Marcus! What stack did you use?"}],shares:12,repostedBy:[]},
+  {id:3,uid:3,body:"Our school climate club just secured a $2,000 grant to plant 500 trees in the neighborhood. Persistence pays off! DM me if you want to volunteer.",time:"1d ago",comments:[],shares:8,repostedBy:[]},
+  {id:4,uid:4,body:"Won 2nd place at HackDenver last weekend! Our team built an AI-powered tutoring tool in 24 hrs. Shoutout to everyone who believed in us.",time:"2d ago",comments:[{uid:1,txt:"Dev you CRUSHED it. So proud!"}],shares:19,repostedBy:[]},
+];
+const JOBS=[
+  {id:1,title:"UX Design Intern",org:"Adobe Systems",verified:true,icon:"pen-tool",type:"job",tags:["Paid","Remote","Summer 2025"],desc:"Work with our design team on real products. 16+ welcome.",dl:"Apply by May 31"},
+  {id:2,title:"Youth Volunteer Coordinator",org:"Denver Parks & Rec",verified:true,icon:"users",type:"volunteer",tags:["Volunteer","In-Person","Denver"],desc:"Help coordinate after-school programs for kids 8–12.",dl:"Rolling applications"},
+  {id:3,title:"1-on-1 Tech Mentorship",org:"Sarah Kim",verified:false,icon:"lightbulb",type:"mentorship",tags:["Mentorship","Free","Remote"],desc:"Frontend engineer at Google offering bi-weekly 1hr sessions.",dl:"2 spots left"},
+  {id:4,title:"Junior Developer — Open Source",org:"Mozilla Foundation",verified:true,icon:"code",type:"project",tags:["Project","Remote","Stipend"],desc:"Contribute to Firefox accessibility features. All skill levels.",dl:"Apply by June 15"},
+  {id:5,title:"Social Media Content Creator",org:"Teen Vogue",verified:true,icon:"video",type:"job",tags:["Paid","Remote","Part-time"],desc:"Create content for our youth audience on social platforms.",dl:"Apply by April 30"},
+  {id:6,title:"Environmental Science Volunteer",org:"Colorado Nature Conservancy",verified:true,icon:"leaf",type:"volunteer",tags:["Volunteer","In-Person","Weekends"],desc:"Assist with field research and data collection projects.",dl:"Starts June 1"},
+];
+const CONVOS={
+  1:[{from:"them",txt:"Hey! Loved your post about the UX project"},{from:"me",txt:"Thanks so much! It was wild but so worth it."},{from:"them",txt:"Would you be open to chatting about how you got the internship?"}],
+  2:[{from:"them",txt:"StudyBuddy is awesome — I've been using it for calc!"},{from:"me",txt:"That means so much! Any feedback?"}],
+  3:[{from:"them",txt:"Saw your post about the tree grant — we want to help volunteer!"},{from:"me",txt:"Amazing! DM me your availability."},{from:"them",txt:"Will do"}],
+  4:[{from:"them",txt:"2nd place at HackDenver is no joke. Great work!"}],
+};
+
+// ── HELPERS ──
+function inits(n){return(n||'?').trim().split(' ').filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';}
+function setAv(el,photo,ini){
+  if(photo){el.innerHTML=`<img src="${photo}" style="width:100%;height:100%;object-fit:cover;" alt="av"/>`;el.style.fontSize='0';}
+  else{el.textContent=ini;el.style.fontSize='';}
+}
+function timeAgo(ts){const h=Math.floor((Date.now()-ts)/3600000);return h<1?'just now':h<24?h+'h ago':Math.floor(h/24)+'d ago';}
+function hasBanned(s){const l=s.toLowerCase().replace(/[^a-z]/g,'');return BANNED.some(w=>l.includes(w));}
+function toast(msg){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2700);}
+function ic(name,size){return `<span class="ic" style="--icsz:${size||18}px" data-lucide="${name}"></span>`;}
+function rerender(){if(window.lucide)lucide.createIcons();}
+
+// ── AUTH ──
+// ── ADMIN & BUSINESS CONFIG ──
+const ADMIN_CODE='TW-ADMIN-2025'; // change this to your secret code
+let isAdmin=false;
+let bizAccounts=[]; // {id, name, type, email, web, desc, status:'pending'|'approved'|'rejected', rejectReason, pass}
+let currentBiz=null;
+
+// Pre-seed a couple of sample pending businesses for demo
+bizAccounts=[
+  {id:'b1',name:'Denver Youth Tech',type:'Nonprofit',email:'contact@denyouthtech.org',web:'https://denyouthtech.org',desc:'We run free coding bootcamps and hackathons for teens across Denver.',pass:'demo123',status:'pending'},
+  {id:'b2',name:'Spark Creative Agency',type:'Company',email:'jobs@sparkcreative.co',web:'https://sparkcreative.co',desc:'A boutique design studio offering paid internships and mentorship to aspiring teen designers.',pass:'demo123',status:'approved'},
+];
+
+function toggleAdminField(){
+  const f=document.getElementById('l-admincode');
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+function switchTab(t){
+  document.querySelectorAll('.auth-tab').forEach((x,i)=>x.classList.toggle('on',i===(t==='login'?0:t==='signup'?1:2)));
+  document.getElementById('login-form').style.display=t==='login'?'flex':'none';
+  document.getElementById('signup-form').style.display=t==='signup'?'flex':'none';
+  document.getElementById('business-form').style.display=t==='business'?'flex':'none';
+  document.getElementById('auth-err').textContent='';
+}
+function doLogin(){
+  const e=document.getElementById('l-email').value.trim();
+  const p=document.getElementById('l-pass').value.trim();
+  const code=document.getElementById('l-admincode').value.trim();
+  if(!e||!p){document.getElementById('auth-err').textContent='Please fill in all fields.';return;}
+  if(p.length<6){document.getElementById('auth-err').textContent='Password must be 6+ characters.';return;}
+  if(!/\S+@\S+\.\S+/.test(e)){document.getElementById('auth-err').textContent='Enter a valid email.';return;}
+  // Admin code check (local, no Firebase needed)
+  if(code){
+    if(code!==ADMIN_CODE){document.getElementById('auth-err').textContent='Invalid admin code.';return;}
+    isAdmin=true;
+    auth.signInWithEmailAndPassword(e,p)
+      .then(()=>{ CU={name:'Admin',username:'@admin',email:e,title:'',bio:'',loc:'',web:'',photo:null,interests:[],skills:[],school:'',grade:'',goal:''};resume={work:[],vol:[],awards:[],proj:[]};launchApp(); })
+      .catch(err=>{ document.getElementById('auth-err').textContent=err.message; });
+    return;
+  }
+  isAdmin=false;
+  // Check if business login first
+  const biz=bizAccounts.find(b=>b.email===e&&b.pass===p);
+  if(biz){
+    if(biz.status==='pending'){showBizPending(biz);return;}
+    if(biz.status==='rejected'){document.getElementById('auth-err').textContent=`Account rejected: ${biz.rejectReason||'Contact support.'}`;return;}
+    if(biz.status==='approved'){currentBiz=biz;launchBizApp();return;}
+  }
+  // Firebase sign in for teen users
+  document.getElementById('auth-err').textContent='Signing in…';
+  auth.signInWithEmailAndPassword(e,p)
+    .then(cred=>{
+      return db.collection('users').doc(cred.user.uid).get();
+    })
+    .then(doc=>{
+      if(doc.exists){
+        const d=doc.data();
+        CU={uid:doc.id,...d};
+      } else {
+        // fallback if no profile doc yet
+        CU={uid:auth.currentUser.uid,name:e.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),username:'@'+e.split('@')[0].toLowerCase(),email:e,title:'',bio:'',loc:'',web:'',photo:null,interests:[],skills:[],school:'',grade:'',goal:''};
+      }
+      resume={work:[],vol:[],awards:[],proj:[]};
+      document.getElementById('auth-err').textContent='';
+      launchApp();
+    })
+    .catch(err=>{
+      document.getElementById('auth-err').textContent=err.message;
+    });
+}
+function doSignup(){
+  const e=document.getElementById('s-email').value.trim(),p=document.getElementById('s-pass').value.trim();
+  if(!e||!p){document.getElementById('auth-err').textContent='Please fill in all fields.';return;}
+  if(p.length<6){document.getElementById('auth-err').textContent='Password must be 6+ characters.';return;}
+  if(!/\S+@\S+\.\S+/.test(e)){document.getElementById('auth-err').textContent='Enter a valid email.';return;}
+  document.getElementById('auth-err').textContent='Creating account…';
+  auth.createUserWithEmailAndPassword(e,p)
+    .then(cred=>{
+      obData={email:e,pass:p,uid:cred.user.uid};
+      document.getElementById('auth-err').textContent='';
+      document.getElementById('auth-screen').style.display='none';
+      document.getElementById('ob-screen').classList.add('on');
+      updateInitPrev();rerender();
+    })
+    .catch(err=>{
+      document.getElementById('auth-err').textContent=err.message;
+    });
+}
+function doBusinessSignup(){
+  const name=document.getElementById('b-name').value.trim();
+  const type=document.getElementById('b-type').value;
+  const email=document.getElementById('b-email').value.trim();
+  const pass=document.getElementById('b-pass').value.trim();
+  const web=document.getElementById('b-web').value.trim();
+  const desc=document.getElementById('b-desc').value.trim();
+  if(!name||!type||!email||!pass||!desc){document.getElementById('auth-err').textContent='Please fill in all required fields.';return;}
+  if(pass.length<6){document.getElementById('auth-err').textContent='Password must be 6+ characters.';return;}
+  if(!/\S+@\S+\.\S+/.test(email)){document.getElementById('auth-err').textContent='Enter a valid email.';return;}
+  if(bizAccounts.find(b=>b.email===email)){document.getElementById('auth-err').textContent='An account with that email already exists.';return;}
+  const newBiz={id:'b'+Date.now(),name,type,email,pass,web,desc,status:'pending'};
+  bizAccounts.push(newBiz);
+  showBizPending(newBiz);
+}
+function showBizPending(biz){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('biz-pending-screen').style.display='flex';
+  rerender();
+}
+function backToAuth(){
+  document.getElementById('biz-pending-screen').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+}
+
+// ── BUSINESS APP ──
+function launchBizApp(){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('biz-app').classList.add('on');
+  // populate hero
+  const logo=document.getElementById('biz-logo-circle');
+  logo.textContent=currentBiz.name.charAt(0).toUpperCase();
+  setAv(document.getElementById('biz-top-av'),null,currentBiz.name.charAt(0).toUpperCase());
+  document.getElementById('biz-org-name').textContent=currentBiz.name;
+  document.getElementById('biz-org-type').textContent=currentBiz.type;
+  document.getElementById('biz-org-desc').textContent=currentBiz.desc;
+  renderBizJobs();rerender();
+}
+function bizGoTab(name){
+  document.querySelectorAll('#biz-app .page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('#biz-app .t-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('biz-page-'+name).classList.add('on');
+  const tb=document.getElementById('biz-tab-'+name);if(tb)tb.classList.add('on');
+}
+function renderBizJobs(){
+  const myJobs=JOBS.filter(j=>j.bizId===currentBiz?.id);
+  const wrap=document.getElementById('biz-own-jobs');
+  const none=document.getElementById('biz-no-jobs');
+  if(!myJobs.length){wrap.innerHTML='';none.style.display='block';return;}
+  none.style.display='none';
+  const typeLabel={job:'Internship',volunteer:'Volunteer',mentorship:'Mentorship',project:'Project'};
+  wrap.innerHTML=myJobs.map(j=>`
+    <div class="job-card" style="margin:0 0 10px">
+      <div class="job-top"><div class="job-icon"><span class="ic" style="--icsz:20px" data-lucide="${j.icon}"></span></div>
+      <div><div class="job-title">${j.title}</div><div class="job-org" style="font-size:.78rem;color:var(--gray)">${typeLabel[j.type]}</div></div></div>
+      <p style="font-size:.84rem;color:#445;line-height:1.5">${j.desc}</p>
+    </div>`).join('');
+  rerender();
+}
+function postJob(){
+  const title=document.getElementById('pj-title').value.trim();
+  const type=document.getElementById('pj-type').value;
+  const desc=document.getElementById('pj-desc').value.trim();
+  const tags=document.getElementById('pj-tags').value.trim().split(',').map(t=>t.trim()).filter(Boolean);
+  const dl=document.getElementById('pj-dl').value.trim()||'Open application';
+  let ok=true;
+  if(!title){document.getElementById('pj-title-err').classList.add('on');document.getElementById('pj-title').classList.add('err');ok=false;}
+  else{document.getElementById('pj-title-err').classList.remove('on');document.getElementById('pj-title').classList.remove('err');}
+  if(!type){document.getElementById('pj-type-err').classList.add('on');document.getElementById('pj-type').classList.add('err');ok=false;}
+  else{document.getElementById('pj-type-err').classList.remove('on');document.getElementById('pj-type').classList.remove('err');}
+  if(!desc){document.getElementById('pj-desc-err').classList.add('on');document.getElementById('pj-desc').classList.add('err');ok=false;}
+  else{document.getElementById('pj-desc-err').classList.remove('on');document.getElementById('pj-desc').classList.remove('err');}
+  if(!ok)return;
+  const iconMap={job:'briefcase',volunteer:'heart',mentorship:'lightbulb',project:'code'};
+  JOBS.unshift({id:'j'+Date.now(),title,org:currentBiz.name,verified:true,icon:iconMap[type]||'briefcase',type,tags,desc,dl,bizId:currentBiz.id});
+  ['pj-title','pj-tags','pj-desc','pj-dl'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pj-type').value='';
+  renderBizJobs();toast('Opportunity posted!');bizGoTab('profile');rerender();
+}
+
+// ── ADMIN PANEL ──
+function renderBotTabs(){
+  const el=document.getElementById('bot-tabs');
+  el.innerHTML=`
+    <button class="t-btn on" id="tab-feed" onclick="goTab('feed')"><span class="ic" data-lucide="home"></span></button>
+    <button class="t-btn" id="tab-messages" onclick="goTab('messages')"><span class="ic" data-lucide="message-circle"></span></button>
+    <button class="t-btn-create" onclick="goTab('create')"><span class="ic" data-lucide="plus-square"></span></button>
+    <button class="t-btn" id="tab-jobs" onclick="goTab('jobs')"><span class="ic" data-lucide="briefcase"></span></button>
+    <button class="t-btn" id="tab-profile" onclick="goTab('profile')"><span class="ic" data-lucide="user-circle"></span></button>
+    ${isAdmin?`<button class="t-btn" id="tab-admin" onclick="goTab('admin')"><span class="ic" data-lucide="shield-check"></span></button>`:''}
+  `;
+  rerender();
+}
+function switchAdminTab(el,secId){
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById(secId).classList.add('on');
+  renderAdminSection(secId);
+}
+function renderAdminSection(secId){
+  if(secId==='admin-pending'){
+    const pending=bizAccounts.filter(b=>b.status==='pending');
+    const el=document.getElementById('admin-pending');
+    if(!pending.length){el.innerHTML=`<div class="admin-empty"><span class="ic" data-lucide="check-circle"></span>No pending applications</div>`;rerender();return;}
+    el.innerHTML=pending.map(b=>adminCardHTML(b,true)).join('');rerender();
+  } else {
+    const approved=bizAccounts.filter(b=>b.status==='approved');
+    const el=document.getElementById('admin-approved');
+    if(!approved.length){el.innerHTML=`<div class="admin-empty"><span class="ic" data-lucide="building-2"></span>No approved businesses yet</div>`;rerender();return;}
+    el.innerHTML=approved.map(b=>adminCardHTML(b,false)).join('');rerender();
+  }
+}
+function adminCardHTML(b,showActions){
+  return`<div class="admin-card" id="acard-${b.id}">
+    <div class="admin-card-top">
+      <div class="admin-card-logo">${b.name.charAt(0).toUpperCase()}</div>
+      <div style="flex:1">
+        <div class="admin-card-name">${b.name}</div>
+        <div class="admin-card-type">${b.type}</div>
+        <div class="admin-card-email"><span class="ic" data-lucide="mail"></span>${b.email}</div>
+        ${b.web?`<div class="admin-card-web"><span class="ic" data-lucide="globe"></span>${b.web}</div>`:''}
+      </div>
+    </div>
+    <div class="admin-card-desc">${b.desc}</div>
+    ${showActions?`
+      <div class="admin-actions">
+        <button class="admin-approve" onclick="approveBiz('${b.id}')">Approve</button>
+        <button class="admin-reject" onclick="toggleRejectForm('${b.id}')">Reject</button>
+      </div>
+      <div class="admin-reject-form" id="rform-${b.id}">
+        <input class="admin-reject-inp" id="rreason-${b.id}" placeholder="Reason for rejection (required)…"/>
+        <button class="admin-reject-send" onclick="rejectBiz('${b.id}')">Send Rejection</button>
+      </div>`
+    :`<div><span class="admin-approved-badge"><span class="ic" data-lucide="badge-check"></span>Approved</span></div>`}
+  </div>`;
+}
+function approveBiz(id){
+  const b=bizAccounts.find(x=>x.id===id);if(!b)return;
+  b.status='approved';
+  renderAdminSection('admin-pending');
+  toast(`${b.name} approved!`);
+}
+function toggleRejectForm(id){
+  const f=document.getElementById('rform-'+id);
+  f.classList.toggle('on');
+}
+function rejectBiz(id){
+  const b=bizAccounts.find(x=>x.id===id);if(!b)return;
+  const reason=document.getElementById('rreason-'+id).value.trim();
+  if(!reason){toast('Please enter a rejection reason.');return;}
+  b.status='rejected';b.rejectReason=reason;
+  renderAdminSection('admin-pending');
+  toast(`${b.name} rejected.`);
+}
+
+// ── ONBOARDING ──
+function cleanUname(el){el.value=el.value.replace(/[^a-zA-Z0-9_]/g,'');}
+function updateInitPrev(){
+  if(photoData)return;
+  const sp=document.getElementById('ob-init-prev');
+  if(sp)sp.textContent=inits(document.getElementById('ob-name').value.trim())||'?';
+}
+function handlePhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  e.target.value='';
+  const r=new FileReader();
+  r.onload=ev=>openCropper(ev.target.result,true,result=>{
+    photoData=result;
+    const c=document.getElementById('ob-photo-circle');
+    c.innerHTML=`<img src="${result}" alt="photo"/><div class="ob-photo-ov" onclick="document.getElementById('ob-file').click()"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
+  });
+  r.readAsDataURL(f);
+}
+function clearPhoto(){
+  photoData=null;document.getElementById('ob-file').value='';
+  const n=document.getElementById('ob-name').value.trim();
+  document.getElementById('ob-photo-circle').innerHTML=`<span id="ob-init-prev">${inits(n)||'?'}</span><div class="ob-photo-ov"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
+}
+function toggleI(el,name){
+  el.classList.toggle('sel');
+  if(el.classList.contains('sel'))selI.push(name);
+  else selI=selI.filter(x=>x!==name);
+}
+function addCustomI(){
+  const inp=document.getElementById('ci-inp');let v=inp.value.trim();
+  if(!v)return;
+  if(v.length<2){toast('Interest too short.');return;}
+  if(hasBanned(v)){toast('That interest is not allowed. Please keep it appropriate.');return;}
+  if(!/^[a-zA-Z0-9\s&\-\/]+$/.test(v)){toast('Letters, numbers, spaces, & - / only.');return;}
+  v=v.charAt(0).toUpperCase()+v.slice(1);
+  if(custI.includes(v)){toast('Already added!');return;}
+  if(selI.length>=12){toast('Max 12 interests.');return;}
+  custI.push(v);selI.push(v);renderCustI();inp.value='';
+}
+function removeCI(v){custI=custI.filter(x=>x!==v);selI=selI.filter(x=>x!==v);renderCustI();}
+function renderCustI(){
+  document.getElementById('ci-list').innerHTML=custI.map(c=>`<div class="i-chip sel" style="font-size:.76rem">${c} <span onclick="removeCI('${c}')" style="margin-left:4px;cursor:pointer;opacity:.65">x</span></div>`).join('');
+}
+function addSkill(){
+  const inp=document.getElementById('sk-inp');let v=inp.value.trim();
+  if(!v)return;
+  if(v.length<2){toast('Skill too short.');return;}
+  if(hasBanned(v)){toast('Please keep skills appropriate.');return;}
+  v=v.charAt(0).toUpperCase()+v.slice(1);
+  if(userSkills.includes(v)){toast('Already added!');return;}
+  if(userSkills.length>=15){toast('Max 15 skills.');return;}
+  userSkills.push(v);renderSkills();inp.value='';
+}
+function removeSkill(v){userSkills=userSkills.filter(x=>x!==v);renderSkills();}
+function renderSkills(){
+  document.getElementById('sk-list').innerHTML=userSkills.map(s=>`<div class="sk-tag">${s}<span class="sk-x" onclick="removeSkill('${s}')" style="cursor:pointer">x</span></div>`).join('');
+}
+
+// Resume builder helpers
+function toggleForm(type,show){
+  document.getElementById(type+'-form').classList.toggle('on',show);
+  document.getElementById(type+'-add-btn').style.display=show?'none':'flex';
+}
+function clearForm(type){
+  const ids={
+    work:['wf-org','wf-role','wf-start','wf-end','wf-loc','wf-desc'],
+    vol:['vf-org','vf-role','vf-start','vf-end','vf-loc','vf-desc'],
+    award:['af-title','af-org','af-date','af-desc'],
+    proj:['pf-name','pf-role','pf-date','pf-desc'],
+  };
+  (ids[type]||[]).forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  // clear error states
+  document.querySelectorAll(`#${type}-form .ob-errmsg`).forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll(`#${type}-form .ob-inp`).forEach(e=>e.classList.remove('err'));
+}
+function reqField(id,errId){
+  const el=document.getElementById(id);const err=document.getElementById(errId);
+  if(!el.value.trim()){err.classList.add('on');el.classList.add('err');return false;}
+  err.classList.remove('on');el.classList.remove('err');return true;
+}
+function saveEntry(type){
+  let entry={};
+  if(type==='work'){
+    if(!reqField('wf-org','wf-org-err')||!reqField('wf-role','wf-role-err'))return;
+    entry={org:document.getElementById('wf-org').value.trim(),role:document.getElementById('wf-role').value.trim(),start:document.getElementById('wf-start').value.trim(),end:document.getElementById('wf-end').value.trim(),loc:document.getElementById('wf-loc').value.trim(),desc:document.getElementById('wf-desc').value.trim()};
+    resume.work.push(entry);renderEntryList('work');
+  } else if(type==='vol'){
+    if(!reqField('vf-org','vf-org-err')||!reqField('vf-role','vf-role-err'))return;
+    entry={org:document.getElementById('vf-org').value.trim(),role:document.getElementById('vf-role').value.trim(),start:document.getElementById('vf-start').value.trim(),end:document.getElementById('vf-end').value.trim(),loc:document.getElementById('vf-loc').value.trim(),desc:document.getElementById('vf-desc').value.trim()};
+    resume.vol.push(entry);renderEntryList('vol');
+  } else if(type==='award'){
+    if(!reqField('af-title','af-title-err')||!reqField('af-org','af-org-err'))return;
+    entry={title:document.getElementById('af-title').value.trim(),org:document.getElementById('af-org').value.trim(),date:document.getElementById('af-date').value.trim(),desc:document.getElementById('af-desc').value.trim()};
+    resume.awards.push(entry);renderEntryList('award');
+  } else if(type==='proj'){
+    if(!reqField('pf-name','pf-name-err')||!reqField('pf-role','pf-role-err'))return;
+    entry={name:document.getElementById('pf-name').value.trim(),role:document.getElementById('pf-role').value.trim(),date:document.getElementById('pf-date').value.trim(),desc:document.getElementById('pf-desc').value.trim()};
+    resume.proj.push(entry);renderEntryList('proj');
+  }
+  clearForm(type);toggleForm(type,false);toast('Entry saved!');
+}
+function deleteEntry(type,idx){
+  if(type==='award')resume.awards.splice(idx,1);
+  else resume[type].splice(idx,1);
+  renderEntryList(type);
+}
+function renderEntryList(type){
+  const listId={work:'work-list',vol:'vol-list',award:'award-list',proj:'proj-list'}[type];
+  const arr=type==='award'?resume.awards:resume[type];
+  document.getElementById(listId).innerHTML=arr.map((e,i)=>{
+    let title='',sub='';
+    if(type==='work'){title=e.role+' at '+e.org;sub=[e.start&&e.end?e.start+' – '+e.end:e.start||e.end,e.loc].filter(Boolean).join(' · ');}
+    else if(type==='vol'){title=e.role+' — '+e.org;sub=[e.start&&e.end?e.start+' – '+e.end:e.start||e.end,e.loc].filter(Boolean).join(' · ');}
+    else if(type==='award'){title=e.title;sub=[e.org,e.date].filter(Boolean).join(' · ');}
+    else{title=e.name;sub=[e.role,e.date].filter(Boolean).join(' · ');}
+    return`<div class="entry-card">
+      <div class="entry-card-body"><div class="entry-card-title">${title}</div>${sub?`<div class="entry-card-sub">${sub}</div>`:''}</div>
+      <button class="entry-del" onclick="deleteEntry('${type}',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+    </div>`;
+  }).join('');
+  rerender();
+}
+
+// Resume sub-step navigation
+function goResSub(n){
+  document.getElementById('res-sec-'+resSubStep).classList.remove('on');
+  resSubStep=n;
+  document.getElementById('res-sec-'+n).classList.add('on');
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('rdot-'+i);
+    d.classList.toggle('done',i<n);
+    d.classList.toggle('active',i===n);
+  }
+  rerender();
+}
+
+function obNext(){
+  if(obStep===1){
+    const nm=document.getElementById('ob-name').value.trim();
+    const un=document.getElementById('ob-uname').value.trim();
+    let ok=true;
+    if(!nm){document.getElementById('ob-name-err').classList.add('on');document.getElementById('ob-name').classList.add('err');ok=false;}
+    else{document.getElementById('ob-name-err').classList.remove('on');document.getElementById('ob-name').classList.remove('err');}
+    if(!un||un.length<3||!/^[a-zA-Z0-9_]+$/.test(un)){document.getElementById('ob-uname-err').classList.add('on');document.getElementById('ob-uname').classList.add('err');ok=false;}
+    else{document.getElementById('ob-uname-err').classList.remove('on');document.getElementById('ob-uname').classList.remove('err');}
+    if(!ok)return;
+    obData.name=nm;obData.username='@'+un.replace(/^@/,'');
+    obData.bio=document.getElementById('ob-bio').value.trim();
+    obData.loc=document.getElementById('ob-loc').value.trim();
+    obData.web=document.getElementById('ob-web').value.trim();
+    obData.photo=photoData;
+    goOBStep(2);
+  } else if(obStep===2){
+    if(!selI.length){document.getElementById('ob-i-err').classList.add('on');return;}
+    document.getElementById('ob-i-err').classList.remove('on');
+    obData.interests=[...selI];goOBStep(3);
+  } else if(obStep===3){
+    obData.skills=[...userSkills];
+    obData.school=document.getElementById('ob-school').value.trim();
+    obData.grade=document.getElementById('ob-grade').value;
+    obData.goal=document.getElementById('ob-goal').value.trim();
+    goOBStep(4);
+  } else if(obStep===4){
+    // inside resume builder, advance sub-steps
+    if(resSubStep<3){goResSub(resSubStep+1);return;}
+    // all resume sub-steps done
+    finishOB();
+  }
+}
+function obBack(){
+  if(obStep===4&&resSubStep>0){goResSub(resSubStep-1);return;}
+  if(obStep>1)goOBStep(obStep-1);
+}
+function goOBStep(n){
+  document.getElementById('obs-'+obStep).classList.remove('on');
+  obStep=n;
+  document.getElementById('obs-'+n).classList.add('on');
+  const pct=[25,50,75,100][n-1];
+  document.getElementById('ob-prog').style.width=pct+'%';
+  document.getElementById('ob-lbl').textContent=`Step ${n} of 4`;
+  document.getElementById('ob-back').style.display=n>1?'block':'none';
+  document.getElementById('ob-next').textContent=n===4&&resSubStep===3?'Finish & Enter':'Next';
+  rerender();
+}
+function skipOB(){
+  obData.name=(obData.email||'').split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase())||'New User';
+  obData.username='@'+((obData.email||'user').split('@')[0].toLowerCase());
+  obData.bio='';obData.loc='';obData.web='';obData.photo=null;
+  obData.interests=['Technology & Coding'];obData.skills=[];obData.school='';obData.grade='';obData.goal='';
+  resume={work:[],vol:[],awards:[],proj:[]};
+  finishOB();
+}
+function finishOB(){
+  CU={
+    uid:obData.uid||null,
+    name:obData.name,username:obData.username,email:obData.email||'',
+    title:obData.goal?'Aspiring '+obData.goal.split(' ').slice(0,3).join(' '):'',
+    bio:obData.bio||'',loc:obData.loc||'',web:obData.web||'',photo:obData.photo||null,
+    interests:obData.interests||[],skills:obData.skills||[],
+    school:obData.school||'',grade:obData.grade||'',goal:obData.goal||'',
+  };
+  // Save profile to Firestore if we have a uid
+  if(CU.uid){
+    db.collection('users').doc(CU.uid).set({
+      name:CU.name,username:CU.username,email:CU.email,
+      title:CU.title,bio:CU.bio,loc:CU.loc,web:CU.web,photo:CU.photo,
+      interests:CU.interests,skills:CU.skills,
+      school:CU.school,grade:CU.grade,goal:CU.goal,
+    }).catch(err=>console.error('Error saving profile:',err));
+  }
+  document.getElementById('ob-screen').classList.remove('on');
+  launchApp();
+}
+
+// ── APP ──
+function launchApp(){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').classList.add('on');
+  stories=[...SAMPLE_STORIES.map(s=>({...s}))];
+  renderBotTabs();
+  renderTopAv();renderComposeAv();buildProfile();renderStories();renderMsgs();renderJobs();
+  if(isAdmin){renderAdminSection('admin-pending');}
+  // Load posts from Firestore in real time, fall back to sample posts on error
+  db.collection('posts').orderBy('time','desc').limit(30)
+    .onSnapshot(snapshot=>{
+      const fp=snapshot.docs.map(doc=>{
+        const d=doc.data();
+        return{id:doc.id,...d,
+          time:d.time?timeAgoFromTs(d.time):'Just now',
+          comments:d.comments||[],images:d.images||[],
+          repostedBy:d.repostedBy||[],shares:d.shares||0};
+      });
+      posts=[...fp,...SAMPLE_POSTS];
+      renderPosts();
+    },()=>{
+      posts=SAMPLE_POSTS.map(p=>({...p,repostedBy:[...p.repostedBy],comments:p.comments.map(c=>({...c}))}));
+      renderPosts();
+    });
+  rerender();
+}
+function timeAgoFromTs(ts){
+  try{const d=ts.toDate?ts.toDate():new Date(ts);const h=Math.floor((Date.now()-d.getTime())/3600000);return h<1?'Just now':h<24?h+'h ago':Math.floor(h/24)+'d ago';}catch(e){return'Just now';}
+}
+function renderTopAv(){setAv(document.getElementById('top-av'),CU.photo,inits(CU.name));}
+function renderComposeAv(){setAv(document.getElementById('compose-av'),CU.photo,inits(CU.name));}
+
+// ── PROFILE ──
+function buildProfile(){
+  setAv(document.getElementById('p-av'),CU.photo,inits(CU.name));
+  document.getElementById('p-name').textContent=CU.name;
+  document.getElementById('p-uname').textContent=CU.username;
+  document.getElementById('p-headline').textContent='';
+  if(CU.loc){document.getElementById('p-loc').style.display='flex';document.getElementById('p-loc-txt').textContent=CU.loc;}
+  else{document.getElementById('p-loc').style.display='none';}
+  document.getElementById('p-badges').innerHTML='';
+  if(CU.bio){document.getElementById('sec-bio').style.display='block';document.getElementById('p-bio').textContent=CU.bio;}
+  if(CU.goal){document.getElementById('sec-goal').style.display='block';document.getElementById('p-goal').textContent=CU.goal;}
+  if(CU.interests.length){document.getElementById('sec-interests').style.display='block';document.getElementById('p-interests').innerHTML=CU.interests.map(i=>`<div class="i-pill">${i}</div>`).join('');}
+  if(CU.skills.length){document.getElementById('sec-skills').style.display='block';document.getElementById('p-skills').innerHTML=CU.skills.map(s=>`<div class="s-pill">${s}</div>`).join('');}
+  if(CU.school||CU.grade){document.getElementById('sec-school').style.display='block';document.getElementById('p-school').textContent=CU.school||'School not listed';document.getElementById('p-grade').textContent=CU.grade;}
+  // Resume sections
+  if(resume.work.length){
+    document.getElementById('sec-work').style.display='block';
+    document.getElementById('p-work').innerHTML=resume.work.map(e=>resumeEntryHTML('work',e)).join('');
+  }
+  if(resume.vol.length){
+    document.getElementById('sec-vol').style.display='block';
+    document.getElementById('p-vol').innerHTML=resume.vol.map(e=>resumeEntryHTML('vol',e)).join('');
+  }
+  if(resume.awards.length){
+    document.getElementById('sec-awards').style.display='block';
+    document.getElementById('p-awards').innerHTML=resume.awards.map(e=>resumeEntryHTML('award',e)).join('');
+  }
+  if(resume.proj.length){
+    document.getElementById('sec-proj').style.display='block';
+    document.getElementById('p-proj').innerHTML=resume.proj.map(e=>resumeEntryHTML('proj',e)).join('');
+  }
+  if(CU.web){document.getElementById('sec-portfolio').style.display='block';document.getElementById('p-web').textContent=CU.web;}
+  document.getElementById('stat-posts').textContent=myPostCount;
+  rerender();
+}
+function resumeEntryHTML(type,e){
+  let title='',org='',dates='',loc='',desc='';
+  if(type==='work'){title=e.role;org=e.org;dates=[e.start,e.end].filter(Boolean).join(' – ');loc=e.loc;desc=e.desc;}
+  else if(type==='vol'){title=e.role;org=e.org;dates=[e.start,e.end].filter(Boolean).join(' – ');loc=e.loc;desc=e.desc;}
+  else if(type==='award'){title=e.title;org=e.org;dates=e.date;desc=e.desc;}
+  else{title=e.name;org=e.role;dates=e.date;desc=e.desc;}
+  return`<div class="resume-entry">
+    <div class="re-header"><div><div class="re-title">${title}</div>${org?`<div class="re-org">${org}</div>`:''}</div>${dates?`<div class="re-dates">${dates}</div>`:''}  </div>
+    ${loc?`<div class="re-loc"><span class="ic" data-lucide="map-pin"></span>${loc}</div>`:''}
+    ${desc?`<div class="re-desc">${desc}</div>`:''}
+  </div>`;
+}
+
+// ── STORIES ──
+let svStoryList=[];
+let svIndex=0;
+function renderStories(){
+  const row=document.getElementById('stories-row');
+  const valid=stories.filter(s=>Date.now()-s.ts<86400000);
+  svStoryList=valid.map(s=>s.id);
+  let html=`<div class="story-item" onclick="goTab('create')">
+    <div class="story-ring add-ring"><div class="story-add-inner"><span class="ic" data-lucide="plus-circle"></span></div></div>
+    <div class="story-lbl">Your Story</div>
+  </div>`;
+  html+=valid.map(s=>{
+    const u=s.uid===0?{name:CU.name,photo:CU.photo}:USERS.find(x=>x.id===s.uid);
+    const firstName=(u?.name||'').split(' ')[0];
+    const avIn=u?.photo?`<img src="${u.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:9px;" alt=""/>`:inits(u?.name||'?');
+    return`<div class="story-item" onclick="openStory(${s.id})">
+      <div class="story-ring${s.seen?' seen':''}"><div class="story-inner">${avIn}</div></div>
+      <div class="story-lbl">${firstName}</div>
+      <div class="story-time">${timeAgo(s.ts)}</div>
+    </div>`;
+  }).join('');
+  row.innerHTML=html;
+  rerender();
+}
+function openStory(id){
+  const valid=stories.filter(s=>Date.now()-s.ts<86400000);
+  svStoryList=valid.map(s=>s.id);
+  const idx=svStoryList.indexOf(id);
+  svIndex=idx>=0?idx:0;
+  document.getElementById('story-viewer').classList.add('on');
+  svShowCurrent();
+}
+function svShowCurrent(){
+  const id=svStoryList[svIndex];
+  const s=stories.find(x=>x.id===id);
+  if(!s){closeStory();return;}
+  s.seen=true;
+  const u=s.uid===0?{name:CU.name,photo:CU.photo}:USERS.find(x=>x.id===s.uid);
+  setAv(document.getElementById('sv-av'),u?.photo||null,inits(u?.name||'?'));
+  document.getElementById('sv-name').textContent=u?.name||'';
+  document.getElementById('sv-time').textContent=timeAgo(s.ts);
+  document.getElementById('sv-body').textContent=s.body;
+  // show image if story has one
+  const imgWrap=document.getElementById('sv-img');
+  const imgEl=document.getElementById('sv-img-el');
+  if(s.image){imgEl.src=s.image;imgWrap.style.display='block';}
+  else{imgWrap.style.display='none';imgEl.src='';}
+  const op=posts.find(p=>p.id===s.postId);
+  const ou=op?(op.uid===0?CU:USERS.find(x=>x.id===op.uid)):null;
+  document.getElementById('sv-orig').textContent=ou?(ou.username||('@'+ou.name.split(' ')[0].toLowerCase())):'';
+  // rebuild progress bars
+  const barsEl=document.getElementById('sv-bars');
+  barsEl.innerHTML=svStoryList.map((_,i)=>`<div class="sv-bar-seg ${i<svIndex?'done':i===svIndex?'active':''}"><div class="sv-bar-seg-fill" id="svbar-${i}"></div></div>`).join('');
+  if(storyTimer)clearTimeout(storyTimer);
+  const fill=document.getElementById('svbar-'+svIndex);
+  if(fill){
+    fill.style.transition='none';fill.style.width='0%';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{fill.style.transition='width 5s linear';fill.style.width='100%';}));
+  }
+  storyTimer=setTimeout(()=>svNav(1),5200);
+  renderStories();
+}
+function svNav(dir){
+  if(storyTimer)clearTimeout(storyTimer);
+  svIndex+=dir;
+  if(svIndex<0){svIndex=0;return;}
+  if(svIndex>=svStoryList.length){closeStory();return;}
+  svShowCurrent();
+}
+function closeStory(){
+  if(storyTimer)clearTimeout(storyTimer);
+  document.getElementById('story-viewer').classList.remove('on');
+  renderStories();
+}
+
+// ── POSTS ──
+function getU(uid){
+  if(uid===0||uid===-1)return{name:CU?.name||'You',ini:inits(CU?.name||'You'),photo:CU?.photo||null,title:CU?.goal?'Aspiring '+CU.goal.split(' ').slice(0,3).join(' '):''};
+  const u=USERS.find(x=>x.id===uid);return{name:u?.name||'User',ini:u?.ini||'?',photo:u?.photo||null,title:u?.title||''};
+}
+function renderPosts(){
+  document.getElementById('posts-wrap').innerHTML=posts.map(p=>{
+    const u=getU(p.uid);
+    const avEl=u.photo?`<div class="post-av"><img src="${u.photo}" alt="av"/></div>`:`<div class="post-av">${u.ini}</div>`;
+    const iRep=p.repostedBy.includes(0);
+    // images — support both old single `img` and new `images` array
+    const imgs=p.images&&p.images.length?p.images:(p.img?[p.img]:[]);
+    const imgsHTML=imgs.length?`<div class="post-imgs">
+      ${imgs.map((src,i)=>`<div class="post-img-thumb ${imgs.length===1?'single':'multi'}" onclick="openLightbox('${src.replace(/'/g,"\\'")}')">
+        <img src="${src}" alt="post image"/>
+      </div>`).join('')}
+    </div>`:'';
+    return`<div class="post-card">
+      <div class="post-hdr">${avEl}<div style="flex:1"><div class="post-name">${u.name}</div><div class="post-role">${u.title}</div></div><div class="post-time">${p.time}</div></div>
+      ${p.body?`<div class="post-body">${p.body}</div>`:''}
+      ${imgsHTML}
+      <div class="post-acts">
+        <button class="pa ${iRep?'act':''}" onclick="toggleRepost(${p.id})">
+          <span class="ic" data-lucide="repeat-2"></span><span id="rc-${p.id}">${p.shares}</span> ${iRep?'Reposted':'Repost'}
+        </button>
+        <button class="pa" onclick="toggleComments(${p.id})">
+          <span class="ic" data-lucide="message-circle"></span>${p.comments.length} Comments
+        </button>
+      </div>
+      <div class="comments-sec" id="cs-${p.id}">
+        ${p.comments.map(c=>{const cu=getU(c.uid);return`<div class="comment">${cu.photo?`<div class="c-av"><img src="${cu.photo}" alt="av"/></div>`:`<div class="c-av">${cu.ini}</div>`}<div class="c-bubble"><div class="c-author">${cu.name}</div><div class="c-text">${c.txt}</div></div></div>`;}).join('')}
+        <div class="c-row"><input class="c-inp" id="ci-${p.id}" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')addComment(${p.id})"/><button class="c-send" onclick="addComment(${p.id})">Reply</button></div>
+      </div>
+    </div>`;
+  }).join('');
+  rerender();
+}
+let pendingPostImgs=[]; // up to 4 base64 strings
+
+function handlePostImages(e){
+  const files=Array.from(e.target.files);
+  const remaining=4-pendingPostImgs.length;
+  if(remaining<=0){toast('Maximum 4 images per post.');return;}
+  const toLoad=files.slice(0,remaining);
+  if(files.length>remaining)toast(`Only ${remaining} more image${remaining===1?'':'s'} allowed.`);
+  e.target.value='';
+  // crop each one in sequence
+  let queue=[...toLoad];
+  function cropNext(){
+    if(!queue.length){renderComposeImgStrip();return;}
+    const f=queue.shift();
+    const r=new FileReader();
+    r.onload=ev=>openCropper(ev.target.result,false,result=>{
+      pendingPostImgs.push(result);
+      cropNext();
+    });
+    r.readAsDataURL(f);
+  }
+  cropNext();
+}
+
+function removePostImage(idx){
+  pendingPostImgs.splice(idx,1);
+  renderComposeImgStrip();
+}
+
+function renderComposeImgStrip(){
+  const strip=document.getElementById('compose-imgs-strip');
+  const btn=document.getElementById('compose-photo-btn');
+  let html=pendingPostImgs.map((src,i)=>`
+    <div class="compose-img-thumb">
+      <img src="${src}" alt="preview"/>
+      <button class="compose-img-thumb-rm" onclick="removePostImage(${i})">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>`).join('');
+  // show "add more" tile if under 4
+  if(pendingPostImgs.length<4&&pendingPostImgs.length>0){
+    html+=`<button class="compose-add-more" onclick="document.getElementById('post-img-input').click()">
+      <span class="ic" data-lucide="plus"></span>
+    </button>`;
+  }
+  strip.innerHTML=html;
+  // hide the Photo button once at least one image is attached (use add-more tile instead)
+  btn.style.display=pendingPostImgs.length>0?'none':'flex';
+  rerender();
+}
+
+function createPost(){
+  const txt=document.getElementById('compose-txt').value.trim();
+  if(!txt&&!pendingPostImgs.length){toast('Add some text or a photo first.');return;}
+  const postData={
+    uid:CU.uid||0,
+    name:CU.name,username:CU.username||'',
+    body:txt,images:[...pendingPostImgs],
+    time:firebase.firestore.FieldValue.serverTimestamp(),
+    comments:[],shares:0,repostedBy:[],
+  };
+  db.collection('posts').add(postData)
+    .then(()=>{
+      myPostCount++;
+      document.getElementById('compose-txt').value='';
+      pendingPostImgs=[];renderComposeImgStrip();
+      document.getElementById('stat-posts').textContent=myPostCount;
+      toast('Post shared!');goTab('feed');
+    })
+    .catch(()=>{
+      // fallback: add locally
+      posts.unshift({id:Date.now(),uid:0,body:txt,images:[...pendingPostImgs],time:'Just now',comments:[],shares:0,repostedBy:[]});
+      myPostCount++;
+      document.getElementById('compose-txt').value='';
+      pendingPostImgs=[];renderComposeImgStrip();
+      renderPosts();document.getElementById('stat-posts').textContent=myPostCount;
+      toast('Post shared!');goTab('feed');
+    });
+}
+function openLightbox(src){
+  document.getElementById('lightbox-img').src=src;
+  document.getElementById('lightbox').classList.add('on');
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('on');
+  document.getElementById('lightbox-img').src='';
+}
+
+// ── IMAGE CROPPER ──
+let cropperState={
+  src:'',zoom:1,x:0,y:0,
+  dragging:false,lastX:0,lastY:0,
+  imgW:0,imgH:0,vpSize:300,
+  isCircle:false,
+  onApply:null // callback(croppedDataURL)
+};
+
+function openCropper(src,isCircle,onApply){
+  cropperState.src=src;
+  cropperState.zoom=1;
+  cropperState.x=0;cropperState.y=0;
+  cropperState.isCircle=!!isCircle;
+  cropperState.onApply=onApply;
+  const modal=document.getElementById('cropper-modal');
+  const vp=document.getElementById('cropper-viewport');
+  const img=document.getElementById('cropper-img');
+  vp.classList.toggle('cropper-circle',!!isCircle);
+  document.getElementById('cropper-zoom').value=1;
+  img.src=src;
+  img.onload=function(){
+    cropperState.imgW=img.naturalWidth;
+    cropperState.imgH=img.naturalHeight;
+    cropperCenter();
+    cropperApplyTransform();
+  };
+  modal.classList.add('on');
+  rerender();
+  // drag events
+  vp.onmousedown=cropperDragStart;
+  vp.ontouchstart=cropperDragStart;
+  document.onmousemove=cropperDragMove;
+  document.ontouchmove=cropperDragMove;
+  document.onmouseup=cropperDragEnd;
+  document.ontouchend=cropperDragEnd;
+}
+function cropperCenter(){
+  const s=cropperState;
+  const vpS=s.vpSize;
+  const scale=s.zoom*(vpS/Math.min(s.imgW,s.imgH));
+  const scaledW=s.imgW*scale,scaledH=s.imgH*scale;
+  s.x=(vpS-scaledW)/2;
+  s.y=(vpS-scaledH)/2;
+}
+function cropperApplyTransform(){
+  const s=cropperState;
+  const vpS=s.vpSize;
+  const scale=s.zoom*(vpS/Math.min(s.imgW,s.imgH));
+  const img=document.getElementById('cropper-img');
+  img.style.transform=`translate(${s.x}px,${s.y}px) scale(${scale})`;
+  img.style.width=s.imgW+'px';
+  img.style.height=s.imgH+'px';
+}
+function cropperSetZoom(val){
+  cropperState.zoom=parseFloat(val);
+  cropperClampPos();
+  cropperApplyTransform();
+}
+function cropperClampPos(){
+  const s=cropperState;
+  const vpS=s.vpSize;
+  const scale=s.zoom*(vpS/Math.min(s.imgW,s.imgH));
+  const scaledW=s.imgW*scale,scaledH=s.imgH*scale;
+  const minX=vpS-scaledW,minY=vpS-scaledH;
+  s.x=Math.min(0,Math.max(minX,s.x));
+  s.y=Math.min(0,Math.max(minY,s.y));
+}
+function cropperDragStart(e){
+  cropperState.dragging=true;
+  const pt=e.touches?e.touches[0]:e;
+  cropperState.lastX=pt.clientX;
+  cropperState.lastY=pt.clientY;
+  e.preventDefault();
+}
+function cropperDragMove(e){
+  if(!cropperState.dragging)return;
+  const pt=e.touches?e.touches[0]:e;
+  const dx=pt.clientX-cropperState.lastX;
+  const dy=pt.clientY-cropperState.lastY;
+  cropperState.lastX=pt.clientX;
+  cropperState.lastY=pt.clientY;
+  cropperState.x+=dx;
+  cropperState.y+=dy;
+  cropperClampPos();
+  cropperApplyTransform();
+}
+function cropperDragEnd(){cropperState.dragging=false;}
+function cropperCancel(){
+  document.getElementById('cropper-modal').classList.remove('on');
+  document.onmousemove=null;document.ontouchmove=null;
+  document.onmouseup=null;document.ontouchend=null;
+}
+function cropperApply(){
+  const s=cropperState;
+  const vpS=s.vpSize;
+  const scale=s.zoom*(vpS/Math.min(s.imgW,s.imgH));
+  const canvas=document.createElement('canvas');
+  canvas.width=vpS;canvas.height=vpS;
+  const ctx=canvas.getContext('2d');
+  if(s.isCircle){
+    ctx.beginPath();ctx.arc(vpS/2,vpS/2,vpS/2,0,Math.PI*2);ctx.clip();
+  }
+  const img=new Image();
+  img.onload=function(){
+    ctx.drawImage(img,s.x,s.y,s.imgW*scale,s.imgH*scale);
+    const result=canvas.toDataURL('image/jpeg',0.88);
+    cropperCancel();
+    if(s.onApply)s.onApply(result);
+  };
+  img.src=s.src;
+}
+function toggleComments(id){document.getElementById('cs-'+id).classList.toggle('on');}
+function addComment(pid){
+  const inp=document.getElementById('ci-'+pid);const txt=inp.value.trim();if(!txt)return;
+  const p=posts.find(x=>x.id===pid);if(!p)return;
+  p.comments.push({uid:-1,txt});renderPosts();
+  document.getElementById('cs-'+pid).classList.add('on');toast('Comment added!');
+}
+function toggleRepost(pid){
+  const p=posts.find(x=>x.id===pid);if(!p)return;
+  const idx=p.repostedBy.indexOf(0);
+  if(idx===-1){
+    p.repostedBy.push(0);p.shares++;
+    stories=stories.filter(s=>!(s.uid===0&&s.postId===pid));
+    const firstImg=(p.images&&p.images.length)?p.images[0]:(p.img||null);
+    stories.unshift({id:Date.now(),uid:0,postId:pid,body:p.body,image:firstImg,ts:Date.now(),seen:false});
+    renderStories();toast('Reposted to your story!');
+  } else {
+    p.repostedBy.splice(idx,1);p.shares=Math.max(0,p.shares-1);
+    stories=stories.filter(s=>!(s.uid===0&&s.postId===pid));
+    renderStories();toast('Repost removed.');
+  }
+  renderPosts();
+}
+
+// ── MESSAGES ──
+function renderMsgs(){
+  document.getElementById('msg-list').innerHTML=USERS.map((u,i)=>{
+    const c=CONVOS[u.id]||[];const last=c[c.length-1];
+    const prev=last?(last.from==='me'?'You: ':'')+last.txt:'Start a conversation';
+    const avEl=u.photo?`<div class="m-av"><img src="${u.photo}" alt="av"/></div>`:`<div class="m-av">${u.ini}</div>`;
+    return`<div class="msg-item" onclick="openChat(${u.id})">${avEl}<div style="flex:1"><div class="m-name">${u.name}</div><div class="m-preview">${prev}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><div class="m-time">${['2h','5h','1d','2d'][i]} ago</div>${i<2?'<div class="unread-dot"></div>':''}</div></div>`;
+  }).join('');
+}
+function openChat(uid){
+  const u=USERS.find(x=>x.id===uid);activeCUID=uid;
+  document.getElementById('chat-nm').textContent=u.name;
+  setAv(document.getElementById('chat-av'),u.photo,u.ini);
+  const msgs=CONVOS[uid]||[];const myI=inits(CU?.name||'Me');
+  document.getElementById('chat-msgs').innerHTML=msgs.map(m=>`
+    <div class="brow ${m.from==='me'?'me':''}">
+      ${m.from!=='me'?`<div class="b-av">${u.photo?`<img src="${u.photo}" style="width:100%;height:100%;object-fit:cover;" alt="av"/>`:u.ini}</div>`:''}
+      <div class="bubble">${m.txt}</div>
+      ${m.from==='me'?`<div class="b-av">${CU?.photo?`<img src="${CU.photo}" style="width:100%;height:100%;object-fit:cover;" alt="av"/>`:myI}</div>`:''}
+    </div>`).join('');
+  document.getElementById('chat-view').classList.add('on');
+  const el=document.getElementById('chat-msgs');setTimeout(()=>{el.scrollTop=el.scrollHeight;},50);
+}
+function closeChat(){document.getElementById('chat-view').classList.remove('on');}
+function sendChat(){
+  const inp=document.getElementById('chat-inp');const txt=inp.value.trim();if(!txt||!activeCUID)return;
+  if(!CONVOS[activeCUID])CONVOS[activeCUID]=[];
+  CONVOS[activeCUID].push({from:'me',txt});inp.value='';
+  const myI=inits(CU?.name||'Me');
+  const el=document.getElementById('chat-msgs');
+  const d=document.createElement('div');d.className='brow me';
+  d.innerHTML=`<div class="bubble">${txt}</div><div class="b-av">${CU?.photo?`<img src="${CU.photo}" style="width:100%;height:100%;object-fit:cover;" alt="av"/>`:myI}</div>`;
+  el.appendChild(d);el.scrollTop=el.scrollHeight;
+}
+
+// ── JOBS ──
+function filterJobs(el,type){document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');jobFilter=type;renderJobs();}
+function renderJobs(){
+  const list=jobFilter==='all'?JOBS:JOBS.filter(j=>j.type===jobFilter);
+  const typeLabel={job:'Internship',volunteer:'Volunteer',mentorship:'Mentorship',project:'Project'};
+  document.getElementById('jobs-wrap').innerHTML=list.map(j=>`
+    <div class="job-card">
+      <div class="job-top">
+        <div class="job-icon"><span class="ic" style="--icsz:22px" data-lucide="${j.icon}"></span></div>
+        <div><div class="job-title">${j.title}</div>
+        <div class="job-org">${j.org} ${j.verified?`<span class="vbadge"><span class="ic" data-lucide="badge-check"></span>Verified</span>`:'<span style="font-size:.72rem;color:#aaa">Individual</span>'}</div></div>
+      </div>
+      <div class="jtags"><span class="jtag ${j.type}">${typeLabel[j.type]}</span>${j.tags.map(t=>`<span class="jtag">${t}</span>`).join('')}</div>
+      <p style="font-size:.85rem;color:#445;line-height:1.5;margin-bottom:12px">${j.desc}</p>
+      <div class="job-foot"><div class="job-dl"><span class="ic" data-lucide="calendar"></span>${j.dl}</div><button class="apply-btn" onclick="toast('Applied to ${j.title}!')">Apply</button></div>
+    </div>`).join('');
+  rerender();
+}
+
+// ── NAV & LOGOUT ──
+function goTab(name){
+  document.querySelectorAll('#app .page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.t-btn,.t-btn-create').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+name).classList.add('on');
+  if(document.getElementById('tab-'+name))document.getElementById('tab-'+name).classList.add('on');
+  if(name==='create'||name==='admin')rerender();
+  if(name==='admin')renderAdminSection('admin-pending');
+}
+let pendingStoryImg=null;
+function handleStoryImage(e){
+  const f=e.target.files[0];if(!f)return;
+  e.target.value='';
+  const r=new FileReader();
+  r.onload=ev=>openCropper(ev.target.result,false,result=>{
+    pendingStoryImg=result;
+    document.getElementById('story-img-el').src=result;
+    document.getElementById('story-img-preview').style.display='block';
+  });
+  r.readAsDataURL(f);
+}
+function removeStoryImage(){
+  pendingStoryImg=null;
+  document.getElementById('story-img-el').src='';
+  document.getElementById('story-img-preview').style.display='none';
+  document.getElementById('story-img-input').value='';
+}
+function createStory(){
+  const txt=document.getElementById('story-txt').value.trim();
+  if(!txt&&!pendingStoryImg){toast('Add some text or a photo first.');return;}
+  stories=stories.filter(s=>!(s.uid===0&&s.postId==null));
+  stories.unshift({id:Date.now(),uid:0,postId:null,body:txt,image:pendingStoryImg||null,ts:Date.now(),seen:false});
+  document.getElementById('story-txt').value='';
+  removeStoryImage();
+  renderStories();toast('Story shared!');goTab('feed');
+}
+// ── EDIT PROFILE MODAL ──
+function openEditModal(){
+  // pre-fill all fields from CU
+  const pc=document.getElementById('em-photo-circle');
+  emPhotoData='__keep__';
+  if(CU.photo){pc.innerHTML=`<img src="${CU.photo}" alt="photo"/><div class="em-photo-ov" onclick="document.getElementById('em-file').click()"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;}
+  else{pc.innerHTML=`<span id="em-init-prev">${inits(CU.name)}</span><div class="em-photo-ov"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;}
+  document.getElementById('em-name').value=CU.name||'';
+  document.getElementById('em-uname').value=(CU.username||'').replace(/^@/,'');
+  document.getElementById('em-bio').value=CU.bio||'';
+  document.getElementById('em-loc').value=CU.loc||'';
+  document.getElementById('em-web').value=CU.web||'';
+  // interests
+  emSelI=[...CU.interests];
+  emCustI=CU.interests.filter(i=>!['Technology & Coding','Arts & Design','Business & Entrepreneurship','Science & Research','Writing & Media','Environment & Activism','Health & Medicine','Music & Performance'].includes(i));
+  document.querySelectorAll('#em-i-grid .i-chip').forEach(chip=>{
+    const name=chip.getAttribute('onclick').match(/'([^']+)'/)?.[1]||'';
+    chip.classList.toggle('sel',emSelI.includes(name));
+  });
+  renderEmCustI();
+  // skills
+  emSkills=[...CU.skills];
+  renderEmSkills();
+  document.getElementById('em-school').value=CU.school||'';
+  document.getElementById('em-grade').value=CU.grade||'';
+  document.getElementById('em-goal').value=CU.goal||'';
+  // resume lists
+  renderEmEntryList('work');renderEmEntryList('vol');renderEmEntryList('award');renderEmEntryList('proj');
+  // show first tab
+  switchEmTab(document.querySelector('.em-tab.on')||document.querySelector('.em-tab'),'em-basics');
+  document.getElementById('edit-modal').classList.add('on');
+  rerender();
+}
+function closeEditModal(){document.getElementById('edit-modal').classList.remove('on');}
+function switchEmTab(el,secId){
+  document.querySelectorAll('.em-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.em-section').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById(secId).classList.add('on');
+  rerender();
+}
+function handleEmPhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  e.target.value='';
+  const r=new FileReader();
+  r.onload=ev=>openCropper(ev.target.result,true,result=>{
+    emPhotoData=result;
+    const c=document.getElementById('em-photo-circle');
+    c.innerHTML=`<img src="${result}" alt="photo"/><div class="em-photo-ov" onclick="document.getElementById('em-file').click()"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
+  });
+  r.readAsDataURL(f);
+}
+function clearEmPhoto(){
+  emPhotoData=null;document.getElementById('em-file').value='';
+  const nm=document.getElementById('em-name').value.trim();
+  document.getElementById('em-photo-circle').innerHTML=`<span id="em-init-prev">${inits(nm)||'?'}</span><div class="em-photo-ov"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
+}
+function toggleEmI(el,name){
+  el.classList.toggle('sel');
+  if(el.classList.contains('sel'))emSelI.push(name);
+  else emSelI=emSelI.filter(x=>x!==name);
+}
+function addEmCustomI(){
+  const inp=document.getElementById('em-ci-inp');let v=inp.value.trim();
+  if(!v)return;
+  if(v.length<2){toast('Too short.');return;}
+  if(hasBanned(v)){toast('Not allowed — please keep it appropriate.');return;}
+  if(!/^[a-zA-Z0-9\s&\-\/]+$/.test(v)){toast('Letters, numbers, spaces, & - / only.');return;}
+  v=v.charAt(0).toUpperCase()+v.slice(1);
+  if(emCustI.includes(v)){toast('Already added!');return;}
+  emCustI.push(v);emSelI.push(v);renderEmCustI();inp.value='';
+}
+function removeEmCI(v){emCustI=emCustI.filter(x=>x!==v);emSelI=emSelI.filter(x=>x!==v);renderEmCustI();}
+function renderEmCustI(){
+  document.getElementById('em-ci-list').innerHTML=emCustI.map(c=>`<div class="i-chip sel" style="font-size:.76rem">${c} <span onclick="removeEmCI('${c}')" style="margin-left:4px;cursor:pointer;opacity:.65">x</span></div>`).join('');
+}
+function addEmSkill(){
+  const inp=document.getElementById('em-sk-inp');let v=inp.value.trim();
+  if(!v)return;
+  if(v.length<2){toast('Too short.');return;}
+  if(hasBanned(v)){toast('Please keep skills appropriate.');return;}
+  v=v.charAt(0).toUpperCase()+v.slice(1);
+  if(emSkills.includes(v)){toast('Already added!');return;}
+  if(emSkills.length>=15){toast('Max 15 skills.');return;}
+  emSkills.push(v);renderEmSkills();inp.value='';
+}
+function removeEmSkill(v){emSkills=emSkills.filter(x=>x!==v);renderEmSkills();}
+function renderEmSkills(){
+  document.getElementById('em-sk-list').innerHTML=emSkills.map(s=>`<div class="sk-tag">${s}<span class="sk-x" onclick="removeEmSkill('${s}')" style="cursor:pointer">x</span></div>`).join('');
+}
+function saveEmSection(sec){
+  if(sec==='basics'){
+    const nm=document.getElementById('em-name').value.trim();
+    const un=document.getElementById('em-uname').value.trim();
+    let ok=true;
+    if(!nm){document.getElementById('em-name-err').classList.add('on');document.getElementById('em-name').classList.add('err');ok=false;}
+    else{document.getElementById('em-name-err').classList.remove('on');document.getElementById('em-name').classList.remove('err');}
+    if(!un||un.length<3||!/^[a-zA-Z0-9_]+$/.test(un)){document.getElementById('em-uname-err').classList.add('on');document.getElementById('em-uname').classList.add('err');ok=false;}
+    else{document.getElementById('em-uname-err').classList.remove('on');document.getElementById('em-uname').classList.remove('err');}
+    if(!ok)return;
+    CU.name=nm;CU.username='@'+un.replace(/^@/,'');
+    CU.bio=document.getElementById('em-bio').value.trim();
+    CU.loc=document.getElementById('em-loc').value.trim();
+    CU.web=document.getElementById('em-web').value.trim();
+    if(emPhotoData!=='__keep__')CU.photo=emPhotoData;
+  } else if(sec==='interests'){
+    if(!emSelI.length){document.getElementById('em-i-err').classList.add('on');return;}
+    document.getElementById('em-i-err').classList.remove('on');
+    CU.interests=[...emSelI];
+  } else if(sec==='professional'){
+    CU.skills=[...emSkills];
+    CU.school=document.getElementById('em-school').value.trim();
+    CU.grade=document.getElementById('em-grade').value;
+    CU.goal=document.getElementById('em-goal').value.trim();
+    if(CU.goal)CU.title='Aspiring '+CU.goal.split(' ').slice(0,3).join(' ');
+  }
+  buildProfile();renderTopAv();renderComposeAv();
+  toast('Profile updated!');closeEditModal();
+}
+// Resume entries in modal (edit existing resume in-place)
+function toggleEmForm(type,show){
+  document.getElementById('em-'+type+'-form').classList.toggle('on',show);
+  document.getElementById('em-'+type+'-add-btn').style.display=show?'none':'flex';
+}
+function clearEmForm(type){
+  const ids={work:['emwf-org','emwf-role','emwf-start','emwf-end','emwf-loc','emwf-desc'],vol:['emvf-org','emvf-role','emvf-start','emvf-end','emvf-loc','emvf-desc'],award:['emaf-title','emaf-org','emaf-date','emaf-desc'],proj:['empf-name','empf-role','empf-date','empf-desc']};
+  (ids[type]||[]).forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+function saveEmEntry(type){
+  let entry={};
+  if(type==='work'){
+    if(!reqField('emwf-org','emwf-org-err')||!reqField('emwf-role','emwf-role-err'))return;
+    entry={org:document.getElementById('emwf-org').value.trim(),role:document.getElementById('emwf-role').value.trim(),start:document.getElementById('emwf-start').value.trim(),end:document.getElementById('emwf-end').value.trim(),loc:document.getElementById('emwf-loc').value.trim(),desc:document.getElementById('emwf-desc').value.trim()};
+    resume.work.push(entry);
+  } else if(type==='vol'){
+    if(!reqField('emvf-org','emvf-org-err')||!reqField('emvf-role','emvf-role-err'))return;
+    entry={org:document.getElementById('emvf-org').value.trim(),role:document.getElementById('emvf-role').value.trim(),start:document.getElementById('emvf-start').value.trim(),end:document.getElementById('emvf-end').value.trim(),loc:document.getElementById('emvf-loc').value.trim(),desc:document.getElementById('emvf-desc').value.trim()};
+    resume.vol.push(entry);
+  } else if(type==='award'){
+    if(!reqField('emaf-title','emaf-title-err')||!reqField('emaf-org','emaf-org-err'))return;
+    entry={title:document.getElementById('emaf-title').value.trim(),org:document.getElementById('emaf-org').value.trim(),date:document.getElementById('emaf-date').value.trim(),desc:document.getElementById('emaf-desc').value.trim()};
+    resume.awards.push(entry);
+  } else if(type==='proj'){
+    if(!reqField('empf-name','empf-name-err')||!reqField('empf-role','empf-role-err'))return;
+    entry={name:document.getElementById('empf-name').value.trim(),role:document.getElementById('empf-role').value.trim(),date:document.getElementById('empf-date').value.trim(),desc:document.getElementById('empf-desc').value.trim()};
+    resume.proj.push(entry);
+  }
+  clearEmForm(type);toggleEmForm(type,false);
+  renderEmEntryList(type);buildProfile();toast('Entry saved!');
+}
+function deleteEmEntry(type,idx){
+  if(type==='award')resume.awards.splice(idx,1);
+  else resume[type].splice(idx,1);
+  renderEmEntryList(type);buildProfile();
+}
+function renderEmEntryList(type){
+  const listId={work:'em-work-list',vol:'em-vol-list',award:'em-award-list',proj:'em-proj-list'}[type];
+  const arr=type==='award'?resume.awards:resume[type];
+  document.getElementById(listId).innerHTML=arr.map((e,i)=>{
+    let title='',sub='';
+    if(type==='work'){title=e.role+' at '+e.org;sub=[e.start&&e.end?e.start+' – '+e.end:e.start||e.end,e.loc].filter(Boolean).join(' · ');}
+    else if(type==='vol'){title=e.role+' — '+e.org;sub=[e.start&&e.end?e.start+' – '+e.end:e.start||e.end,e.loc].filter(Boolean).join(' · ');}
+    else if(type==='award'){title=e.title;sub=[e.org,e.date].filter(Boolean).join(' · ');}
+    else{title=e.name;sub=[e.role,e.date].filter(Boolean).join(' · ');}
+    return`<div class="entry-card"><div class="entry-card-body"><div class="entry-card-title">${title}</div>${sub?`<div class="entry-card-sub">${sub}</div>`:''}</div><button class="entry-del" onclick="deleteEmEntry('${type}',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>`;
+  }).join('');
+  rerender();
+}
+
+function doLogout(){
+  auth.signOut().catch(()=>{});
+  CU=null;currentBiz=null;isAdmin=false;posts=[];stories=[];myPostCount=0;userSkills=[];selI=[];custI=[];photoData=null;obData={};obStep=1;resSubStep=0;pendingPostImgs=[];pendingStoryImg=null;
+  resume={work:[],vol:[],awards:[],proj:[]};
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('biz-app').classList.remove('on');
+  document.getElementById('ob-screen').classList.remove('on');
+  document.getElementById('biz-pending-screen').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('l-email').value='';document.getElementById('l-pass').value='';
+  document.getElementById('l-admincode').value='';document.getElementById('l-admincode').style.display='none';
+  document.getElementById('auth-err').textContent='';
+}
+
+// Init icons on load
+window.addEventListener('load',()=>{if(window.lucide)lucide.createIcons();});
+</script>
+</body>
+</html>
